@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">transferr</string>
+    <string name="user">usuário:</string>
+    <string name="password">senha:</string>
+    <string name="btnLogin">Entrar</string>
+    <string name="registernewuser">Cadastrar-se</string>
 </resources>

@@ -1,12 +1,13 @@
-package br.com.transferr
+package br.com.transferr.activities
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import br.com.transferr.R
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : SuperClassActivity(){
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
     }
 }
