@@ -25,7 +25,4 @@ class ApplicationTransferr : Application() {
         }
     }
 
-    override fun onTerminate() {
-        super.onTerminate()
-    }
 }
