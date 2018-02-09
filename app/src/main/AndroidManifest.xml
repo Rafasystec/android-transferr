@@ -33,14 +33,18 @@
             </intent-filter>
         </activity>
         <activity android:name=".activities.LoginActivity" />
+
         <!-- Google play service -->
+
         <meta-data
             android:name="com.google.android.gms.vision"
             android:value="@integer/google_play_services_version" />
+
         <!-- Chave de acesso API -->
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
             android:value="@string/API_KEY" />
+
         <!-- Configures the Firebase -->
         <service android:name=".util.FirebaseMessagingServiceUtil">
             <intent-filter>

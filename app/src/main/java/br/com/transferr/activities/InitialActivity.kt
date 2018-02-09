@@ -14,6 +14,7 @@ import android.support.v7.app.AlertDialog
 import android.util.Log
 import android.widget.Toast
 import br.com.transferr.R
+import br.com.transferr.extensions.inTransaction
 import br.com.transferr.model.Car
 import br.com.transferr.model.Coordinates
 import br.com.transferr.model.Driver
@@ -24,8 +25,10 @@ import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.maps.MapFragment
 import com.google.android.gms.tasks.OnSuccessListener
 import kotlinx.android.synthetic.main.activity_initial.*
+import kotlinx.android.synthetic.main.fragment_maps.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
@@ -46,7 +49,7 @@ class InitialActivity : SuperClassActivity(), GoogleApiClient.ConnectionCallback
     lateinit var locationManager: LocationManager
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_initial)
+        setContentView(R.layout.fragment_maps)
 
        // MultiDex.install(this)
 
@@ -59,6 +62,10 @@ class InitialActivity : SuperClassActivity(), GoogleApiClient.ConnectionCallback
         mLocationManager = this.getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
         checkLocation()
+        //add
+       // supportFragmentManager.inTransaction {
+       //     add(R.id.mapFragment, mapFragment)
+       // }
     }
 
     override fun onStart() {
@@ -69,7 +76,7 @@ class InitialActivity : SuperClassActivity(), GoogleApiClient.ConnectionCallback
     }
 
     override fun onStop() {
-        super.onStop();
+        super.onStop()
         if (mGoogleApiClient.isConnected()) {
             mGoogleApiClient.disconnect()
         }
@@ -77,7 +84,7 @@ class InitialActivity : SuperClassActivity(), GoogleApiClient.ConnectionCallback
     override fun onConnectionSuspended(p0: Int) {
 
         Log.i(TAG, "Connection Suspended");
-        mGoogleApiClient.connect();
+        mGoogleApiClient.connect()
     }
 
     override fun onConnectionFailed(connectionResult: ConnectionResult) {
@@ -86,12 +93,12 @@ class InitialActivity : SuperClassActivity(), GoogleApiClient.ConnectionCallback
 
     override fun onLocationChanged(location: Location) {
         var msg = "Updated Location: LatLon " + location.latitude + " - " + location.longitude
-        txt_latitude.setText(""+location.latitude)
-        txt_longitude.setText(""+location.longitude)
+        //txt_latitude.setText(""+location.latitude)
+        //txt_longitude.setText(""+location.longitude)
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
-        var car:Car = getDefaultCar()
-        var coordinates:Coordinates = Coordinates(location.latitude,location.longitude,car)
-        callWebService(coordinates)
+        //var car:Car = getDefaultCar()
+        //var coordinates:Coordinates = Coordinates(location.latitude,location.longitude,car)
+        //callWebService(coordinates)
     }
 
     private fun getDefaultCar(): Car {
