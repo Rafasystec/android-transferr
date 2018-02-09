@@ -16,7 +16,6 @@
         android:name="br.com.transferr.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
 
-
     <application
         android:name=".application.ApplicationTransferr"
         android:allowBackup="true"
@@ -56,9 +55,15 @@
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
-        <service android:name=".services.SuperIntentService" android:exported="false"/>
-        <service android:name=".services.LocationTrackingService" android:exported="false"/>
-        <activity android:name=".activities.InitialActivity"/>
+        <service
+            android:name=".services.SuperIntentService"
+            android:exported="false" />
+        <service
+            android:name=".services.LocationTrackingService"
+            android:exported="false" />
+
+        <activity android:name=".activities.InitialActivity" />
+        <activity android:name=".activities.FormDriverActivity"></activity>
     </application>
 
 </manifest>

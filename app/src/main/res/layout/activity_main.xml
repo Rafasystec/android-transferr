@@ -73,4 +73,11 @@
         android:textOn="SIM"
         />
 
+ <Button
+     android:id="@+id/btnFrmDriver"
+     android:layout_width="220dp"
+     android:layout_height="wrap_content"
+     android:text="Meus Dados"
+     android:layout_gravity="center"/>
+
 </LinearLayout>
