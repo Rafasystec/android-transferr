@@ -24,6 +24,7 @@ object CallRESTMethodsUtil{
 
     //POST com JSON
     fun post(url: String,json:String):String{
+        log("POST $url --> $json")
         val body = RequestBody.create(JSON,json)
         val request =Request.Builder().url(url).post(body).build()
         return getJson(request)
@@ -39,6 +40,7 @@ object CallRESTMethodsUtil{
         val responseBody = response.body()
         if(responseBody != null){
             val json = responseBody.string()
+            log("JSON returned -->> $json")
             return json
         }
         throw IOException("Erro ao fazer o requisição")

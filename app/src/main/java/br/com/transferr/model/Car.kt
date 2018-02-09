@@ -9,7 +9,7 @@ data class Car(var model: String,
                var carIdentity: String,
                var color:String,
                 var externalEquip:Boolean,
-               var dirver:Driver,
+               var driver:Driver,
                var status:EnumStatus) : Entity(){
 
     //private val model: String? = null

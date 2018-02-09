@@ -7,11 +7,70 @@
 
    <!-- including the toolbar -->
     <include layout="@layout/toolbar"/>
-    <Button
-        android:id="@+id/btnLocation"
-        android:layout_width="wrap_content"
+
+    <TextView
+        android:id="@+id/lblDadosDoVeiculo"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:text="Dados do Veículo"
         android:layout_gravity="center"
-        android:text="@string/btnLocation"/>
+        android:textAppearance="@style/TextAppearance.AppCompat"
+        android:textSize="25dp"
+        android:textAlignment="center"
+        android:layout_marginBottom="@dimen/form_margin_bottom"/>
+
+    <TextView
+        android:id="@+id/lblIdentificacao"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Identificacao: OHS-8590"
+        android:textSize="18dp"
+        android:layout_marginLeft="@dimen/form_margin_left"
+        android:textColor="@color/primary_dark"
+        android:layout_marginBottom="@dimen/form_margin_bottom"/>
+
+
+    <TextView
+        android:id="@+id/lblModelo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Modelo: Chevrolet D-20"
+        android:textSize="18dp"
+        android:layout_marginLeft="@dimen/form_margin_left"
+        android:textColor="@color/primary_dark"
+        android:layout_marginBottom="@dimen/form_margin_bottom"
+        />
+
+    <TextView
+        android:id="@+id/lblColor"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Cor: Bege Desert"
+        android:textSize="18dp"
+        android:layout_marginLeft="@dimen/form_margin_left"
+        android:textColor="@color/primary_dark"
+        android:layout_marginBottom="@dimen/form_margin_bottom"
+        />
+    <TextView
+        android:id="@+id/lblMotorista"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Motorista: José de Paula"
+        android:textSize="18dp"
+        android:layout_marginLeft="@dimen/form_margin_left"
+        android:textColor="@color/primary_dark"
+        android:layout_marginBottom="@dimen/form_margin_bottom"
+        />
+
+    <Switch
+        android:id="@+id/swtOnline"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Online"
+        android:checked="true"
+        android:textSize="@dimen/form_text_size"
+        android:textOff="NÃO"
+        android:textOn="SIM"
+        />
 
 </LinearLayout>

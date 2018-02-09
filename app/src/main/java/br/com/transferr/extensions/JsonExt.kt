@@ -1,5 +1,6 @@
 package br.com.transferr.extensions
 
+import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
@@ -13,6 +14,7 @@ fun Any.toJson(prettyPrinting:Boolean = false):String{
         builder.setPrettyPrinting()
     }
     val json = builder.create().toJson(this)
+    Log.d("JSON",json)
     return json
 }
 

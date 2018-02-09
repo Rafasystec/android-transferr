@@ -7,7 +7,7 @@ import java.util.*
  */
 data class Driver (var name: String,
                    var countryRegister: String,
-                   var birthDate: Date): Entity(){
+                   var birthDate: Int): Entity(){
 
    // private val name: String? = null
    // private val countryRegister: String? = null

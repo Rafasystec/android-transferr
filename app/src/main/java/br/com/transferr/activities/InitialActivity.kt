@@ -14,25 +14,23 @@ import android.support.v7.app.AlertDialog
 import android.util.Log
 import android.widget.Toast
 import br.com.transferr.R
-import br.com.transferr.extensions.inTransaction
+import br.com.transferr.fragments.MapsFragment
 import br.com.transferr.model.Car
 import br.com.transferr.model.Coordinates
 import br.com.transferr.model.Driver
 import br.com.transferr.model.enums.EnumStatus
-import br.com.transferr.services.CoordinateService
+import br.com.transferr.services.LocationTrackingService
+import br.com.transferr.services.SuperIntentService
+import br.com.transferr.webservices.CoordinateService
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.maps.MapFragment
 import com.google.android.gms.tasks.OnSuccessListener
-import kotlinx.android.synthetic.main.activity_initial.*
-import kotlinx.android.synthetic.main.fragment_maps.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
-import java.util.*
 
 
 class InitialActivity : SuperClassActivity(), GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener  {
@@ -49,10 +47,10 @@ class InitialActivity : SuperClassActivity(), GoogleApiClient.ConnectionCallback
     lateinit var locationManager: LocationManager
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.fragment_maps)
+        setContentView(R.layout.activity_initial)
 
        // MultiDex.install(this)
-
+        //TODO Quando for ver  parte do passageriro olhar para essa calsse de exemplo
         mGoogleApiClient = GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
@@ -62,10 +60,14 @@ class InitialActivity : SuperClassActivity(), GoogleApiClient.ConnectionCallback
         mLocationManager = this.getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
         checkLocation()
-        //add
-       // supportFragmentManager.inTransaction {
-       //     add(R.id.mapFragment, mapFragment)
-       // }
+        val mapsFragment = MapsFragment()
+        mapsFragment.arguments = intent.extras
+        supportFragmentManager
+                .beginTransaction()
+                .replace(R.id.map,mapsFragment)
+                .commit()
+        startService(Intent(this,SuperIntentService::class.java))
+        startService(Intent(this,LocationTrackingService::class.java))
     }
 
     override fun onStart() {
@@ -83,7 +85,7 @@ class InitialActivity : SuperClassActivity(), GoogleApiClient.ConnectionCallback
     }
     override fun onConnectionSuspended(p0: Int) {
 
-        Log.i(TAG, "Connection Suspended");
+        Log.i(TAG, "Connection Suspended")
         mGoogleApiClient.connect()
     }
 
@@ -96,14 +98,18 @@ class InitialActivity : SuperClassActivity(), GoogleApiClient.ConnectionCallback
         //txt_latitude.setText(""+location.latitude)
         //txt_longitude.setText(""+location.longitude)
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
-        //var car:Car = getDefaultCar()
-        //var coordinates:Coordinates = Coordinates(location.latitude,location.longitude,car)
-        //callWebService(coordinates)
+        var car:Car = getDefaultCar()
+        var coordinates = Coordinates()
+        coordinates.id = 0
+        coordinates.car         = car
+        coordinates.latitude    = location.latitude
+        coordinates.longitude   = location.longitude
+        callWebService(coordinates)
     }
 
     private fun getDefaultCar(): Car {
 
-        var driver:Driver = Driver("Jose","664764",birthDate = Date())
+        var driver:Driver = Driver("Jose","664764", 19880305)
         var car:Car = Car("cheve","2215563","azul",true,driver,EnumStatus.OFFLINE)
         return car
     }
@@ -112,8 +118,12 @@ class InitialActivity : SuperClassActivity(), GoogleApiClient.ConnectionCallback
         doAsync {
             val response = CoordinateService.save(coordinates)
             uiThread {
-                toast(response.msg)
-                finish()
+               var msg = response.msg
+                if(msg == null){
+                    msg = "Invalid Message"
+                }
+                toast(msg)
+                //finish()
             }
         }
     }
@@ -156,9 +166,9 @@ class InitialActivity : SuperClassActivity(), GoogleApiClient.ConnectionCallback
 
     private fun showAlert() {
         val dialog = AlertDialog.Builder(this)
-        dialog.setTitle("Enable Location")
-                .setMessage("Your Locations Settings is set to 'Off'.\nPlease Enable Location to " + "use this app")
-                .setPositiveButton("Location Settings", DialogInterface.OnClickListener { paramDialogInterface, paramInt ->
+        dialog.setTitle("Habilitar Localização")
+                .setMessage("Precisamos ativar o GPS.\nPor favor ative-o.")
+                .setPositiveButton("Ativar GPS", DialogInterface.OnClickListener { paramDialogInterface, paramInt ->
                     val myIntent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
                     startActivity(myIntent)
                 })
@@ -179,5 +189,6 @@ class InitialActivity : SuperClassActivity(), GoogleApiClient.ConnectionCallback
         }
         LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,
                 mLocationRequest, this)
+
     }
 }
