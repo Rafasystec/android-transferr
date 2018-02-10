@@ -1,9 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="br.com.transferr.activities.FormDriverActivity">
+    tools:context="br.com.transferr.activities.FormDriverActivity"
+    android:orientation="vertical"
+    >
+    <TextView
+        android:id="@+id/lblMyData"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Meus Dados"
+        android:layout_gravity="center"
+        android:textAppearance="@style/TextAppearance.AppCompat"
+        android:textSize="25dp"
+        android:textAlignment="center"
+        android:layout_marginBottom="@dimen/form_margin_bottom"/>
 
-</android.support.constraint.ConstraintLayout>
+    <TextView
+        android:id="@+id/lblName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Nome:"
+        android:textSize="@dimen/form_text_size"
+        android:layout_marginLeft="@dimen/form_margin_left"/>
+
+    <EditText
+        android:id="@+id/txtName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="textPersonName"
+        android:text="Name"
+        android:hint="Identific"
+        android:layout_marginLeft="@dimen/form_margin_left"/>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Data de Nascimento"
+        android:textSize="@dimen/form_text_size"
+        android:layout_marginLeft="@dimen/form_margin_left"
+        />
+
+    <EditText
+        android:id="@+id/txtDtNacimento"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:inputType="date"
+        android:textSize="@dimen/form_text_size"
+        android:layout_marginLeft="@dimen/form_margin_left"
+        />
+    <Button
+        android:id="@+id/btnSaveDriver"
+        android:layout_width="@dimen/form_btn_size"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Salvar"
+        android:layout_marginTop="32sp"
+        android:textColor="@color/white"
+        android:background="@color/primary"
+
+        />
+</LinearLayout>
