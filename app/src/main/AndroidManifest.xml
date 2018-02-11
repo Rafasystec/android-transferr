@@ -63,7 +63,8 @@
             android:exported="false" />
 
         <activity android:name=".activities.InitialActivity" />
-        <activity android:name=".activities.FormDriverActivity"></activity>
+        <activity android:name=".activities.FormDriverActivity" />
+        <activity android:name=".activities.DriverPersonalInforActivity"></activity>
     </application>
 
 </manifest>
