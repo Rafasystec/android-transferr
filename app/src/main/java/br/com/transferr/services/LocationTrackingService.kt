@@ -55,11 +55,11 @@ class LocationTrackingService : Service() {
     @SuppressLint("MissingPermission")
     private fun run(){
         var location = locationManager?.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-        Log.d(TAG,"Location in  onCreated ${location?.latitude} - ${location?.longitude}")
+        Log.d(TAG,"Location run ${location?.latitude} - ${location?.longitude}")
         while (runs){
             Thread.sleep(2*1000)
             location = locationManager?.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-            Log.d(TAG,"Location in  onCreated ${location?.latitude} - ${location?.longitude}")
+            Log.d(TAG,"My Location ${location?.latitude} - ${location?.longitude}")
             //callWebService(location)
         }
 
