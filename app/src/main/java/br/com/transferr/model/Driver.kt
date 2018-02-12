@@ -5,7 +5,7 @@ import java.util.*
 /**
  * Created by idoctor on 08/02/2018.
  */
-data class Driver (var name: String,
+class Driver (var name: String,
                    var countryRegister: String,
                    var birthDate: Int): Entity(){
 

@@ -117,11 +117,12 @@
      android:layout_width="match_parent"
      android:layout_height="wrap_content"
      android:checked="true"
-     android:text="Online"
+     android:text="Procurando por passageiros"
      android:textSize="@dimen/form_text_size"
      android:textOff="NÃO"
      android:textOn="SIM"
      android:showText="true"
+     android:textColor="@color/white"
         />
 
  <Button

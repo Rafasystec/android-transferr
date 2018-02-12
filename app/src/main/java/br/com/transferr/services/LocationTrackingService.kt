@@ -18,7 +18,7 @@ import org.jetbrains.anko.uiThread
 
 class LocationTrackingService : Service() {
 
-    var locationManager: LocationManager? = null
+    private var locationManager: LocationManager? = null
 
     override fun onBind(intent: Intent?) = null
 
@@ -54,13 +54,19 @@ class LocationTrackingService : Service() {
 
     @SuppressLint("MissingPermission")
     private fun run(){
-        var location = locationManager?.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-        Log.d(TAG,"Location run ${location?.latitude} - ${location?.longitude}")
+        //var location = locationManager?.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+        //var location = getLastKnownLocation()
+        //Log.d(TAG,"Location run ${location?.latitude} - ${location?.longitude}")
+
         while (runs){
             Thread.sleep(2*1000)
-            location = locationManager?.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-            Log.d(TAG,"My Location ${location?.latitude} - ${location?.longitude}")
-            //callWebService(location)
+            var location = locationManager?.getLastKnownLocation(LocationManager.GPS_PROVIDER)
+            if(location != null) {
+                Log.d(TAG, "My Location ${location?.latitude} - ${location?.longitude}")
+                callWebService(location)
+            }else{
+                Log.d(TAG, "Cannot get the location, it was null.")
+            }
         }
 
     }
@@ -89,6 +95,21 @@ class LocationTrackingService : Service() {
         var driver: Driver = Driver("Jose","664764", 19880305)
         var car:Car = Car("cheve","2215563","azul",true,driver, EnumStatus.OFFLINE)
         return car
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun getLastKnownLocation(): Location? {
+        locationManager = applicationContext.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        val providers = locationManager!!.getProviders(true)
+        var bestLocation: Location? = null
+        for (provider in providers) {
+            val l = locationManager!!.getLastKnownLocation(provider) ?: continue
+            if (bestLocation == null || l.getAccuracy() < bestLocation.accuracy) {
+                // Found best last known location: %s", l);
+                bestLocation = l
+            }
+        }
+        return bestLocation
     }
 
 }

@@ -11,7 +11,7 @@ import java.io.IOException
  * Created by idoctor on 08/02/2018.
  */
 
-object CallRESTMethodsUtil{
+open class CallRESTMethodsUtil <T>{
     private val TAG = "HTTP_REST"
     private val LOG_ON =true
     val JSON = MediaType.parse("application/json; charset=utf-8")

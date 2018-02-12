@@ -11,11 +11,12 @@ import br.com.transferr.util.CallRESTMethodsUtil
  */
 
 object CoordinateService{
-    private val BASE_URL = "http://192.168.0.102:8080/transferr-rest/rest/"
+    private val BASE_URL = "http://192.168.15.7:8080/transferr-rest/rest/"
     //Salvar a coordenada
-    fun save(coordinates: Coordinates): Response{
-        val json = CallRESTMethodsUtil.post(BASE_URL+"coordinates",coordinates.toJson())
-        val response = fromJson<Response>(json)
-        return response
-    }
+    //TODO Implements later
+    //fun save(coordinates: Coordinates): Response{
+       // val json = CallRESTMethodsUtil.post(BASE_URL+"coordinates",coordinates.toJson())
+       // val response = fromJson<Response>(json)
+        //return response
+    //}
 }
