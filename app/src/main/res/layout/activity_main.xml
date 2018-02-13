@@ -122,7 +122,7 @@
      android:textOff="NÃO"
      android:textOn="SIM"
      android:showText="true"
-     android:textColor="@color/white"
+     android:textColor="@color/black"
         />
 
  <Button

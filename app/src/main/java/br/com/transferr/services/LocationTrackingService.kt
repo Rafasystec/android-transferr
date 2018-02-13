@@ -81,12 +81,7 @@ class LocationTrackingService : Service() {
         doAsync {
             val response = CoordinateService.save(coordinates)
             uiThread {
-                var msg = response.msg
-                if(msg == null){
-                    msg = "Invalid Message"
-                }
-                toast(msg)
-                //finish()
+
             }
         }
     }

@@ -11,20 +11,22 @@ import android.os.Bundle
 import android.provider.Settings
 import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AlertDialog
-import android.util.Log
 import br.com.transferr.R
 import br.com.transferr.extensions.setupToolbar
 import br.com.transferr.model.Car
-import br.com.transferr.model.Driver
-import br.com.transferr.model.enums.EnumStatus
 import br.com.transferr.services.LocationTrackingService
+import br.com.transferr.util.Prefes
+import br.com.transferr.webservices.CarService
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.location.LocationServices
 import kotlinx.android.synthetic.main.activity_main.*
+import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
+import org.jetbrains.anko.uiThread
 
 class MainActivity : SuperClassActivity() , GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener{
+
 
     override fun onConnectionFailed(p0: ConnectionResult) {
 
@@ -40,6 +42,7 @@ class MainActivity : SuperClassActivity() , GoogleApiClient.ConnectionCallbacks,
         stopInitLocation()
     }
 
+    var carService:CarService = CarService()
     private lateinit var mGoogleApiClient: GoogleApiClient
     private var mLocationManager: LocationManager? = null
     lateinit var locationManager: LocationManager
@@ -51,7 +54,7 @@ class MainActivity : SuperClassActivity() , GoogleApiClient.ConnectionCallbacks,
         swtOnline.setOnClickListener { stopInitLocation() }
         buildLocationAPI()
         stopInitLocation()
-        initScreenFields()
+        getCarFromWebService()
     }
 /*
     fun callInitialActivity(){
@@ -59,8 +62,8 @@ class MainActivity : SuperClassActivity() , GoogleApiClient.ConnectionCallbacks,
         startActivity(intentInit)
     }
 */
-    fun callFormDriver(){
-        val intentInit = Intent(context,FormDriverActivity::class.java)
+    private fun callFormDriver(){
+        val intentInit = Intent(context,DriverInforActivity::class.java)
         startActivity(intentInit)
     }
 
@@ -153,17 +156,24 @@ class MainActivity : SuperClassActivity() , GoogleApiClient.ConnectionCallbacks,
         return true
     }
 
-    private fun initScreenFields(){
-        var car = getCarFromWebService()
+    private fun initScreenFields(car:Car){
+        //var car = getCarFromWebService()
         lblColorValue.text = car.color
         lblDriverValue.text= car.driver.name
         lblModelValue.text = car.model
         lblPlacaValue.text = car.carIdentity
     }
 
-    private fun getCarFromWebService(): Car{
-
-        var driver = Driver("Dalessandro Vieira","Brazil",19800303)
-        return Car("S-10","HHy-1356","Cinza fosco",false,driver,EnumStatus.OFFLINE)
+    private fun getCarFromWebService(): Unit{
+        //var driver = Driver("Dalessandro Vieira","Brazil",19800303)
+        //return Car("S-10","HHy-1356","Cinza fosco",false,driver,EnumStatus.OFFLINE)
+        doAsync {
+            var car = carService.getCar(1)
+            uiThread {
+                initScreenFields(car)
+            }
+        }
     }
+
+
 }

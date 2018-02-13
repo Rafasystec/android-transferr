@@ -1,6 +1,9 @@
 package br.com.transferr.util
 
 import android.util.Log
+import br.com.transferr.extensions.fromJson
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import okhttp3.MediaType
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -41,6 +44,7 @@ open class CallRESTMethodsUtil <T>{
         if(responseBody != null){
             val json = responseBody.string()
             log("JSON returned -->> $json")
+            //return fromJson<T>(json)
             return json
         }
         throw IOException("Erro ao fazer o requisição")
@@ -50,5 +54,10 @@ open class CallRESTMethodsUtil <T>{
         if(LOG_ON){
             Log.d(TAG,event)
         }
+    }
+
+    inline fun <reified T> fromJson(json: String): T{
+        val type = object : TypeToken<T>(){}.type
+        return Gson().fromJson<T>(json,type)
     }
 }
