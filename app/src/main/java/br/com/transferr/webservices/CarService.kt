@@ -13,6 +13,7 @@ class CarService {
     fun getCar(id:Int): Car {
         var json = callREST.get(urlBase+"car/$id")
         var car = callREST.fromJson<Car>(json)
+        Thread.sleep(2*1000)
         return car
     }
 }

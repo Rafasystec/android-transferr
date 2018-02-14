@@ -8,5 +8,7 @@
     android:background="?attr/colorPrimary"
     android:minHeight="?attr/actionBarSize"
     >
+    <!-- "Mark Favorite", should appear as action button if possible -->
+
 
 </android.support.v7.widget.Toolbar>

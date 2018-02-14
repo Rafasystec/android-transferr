@@ -1,14 +1,17 @@
 package br.com.transferr.util
 
 import android.util.Log
+import br.com.transferr.exceptions.UnaspectedErroException
+import br.com.transferr.exceptions.ValidationException
 import br.com.transferr.extensions.fromJson
+import br.com.transferr.model.MapErroRetornoRest
+import br.com.transferr.model.enums.EnumFailSystem
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import okhttp3.MediaType
-import okhttp3.OkHttpClient
-import okhttp3.Request
-import okhttp3.RequestBody
+import okhttp3.*
 import java.io.IOException
+import java.net.CacheResponse
+import java.net.HttpURLConnection
 
 /**
  * Created by idoctor on 08/02/2018.
@@ -40,11 +43,11 @@ open class CallRESTMethodsUtil <T>{
     //le resposta do servidor em formato JSON
     private fun getJson(request:Request?): String{
         val response = client.newCall(request).execute()
+        checkIfRequestFailed(response)
         val responseBody = response.body()
         if(responseBody != null){
             val json = responseBody.string()
             log("JSON returned -->> $json")
-            //return fromJson<T>(json)
             return json
         }
         throw IOException("Erro ao fazer o requisição")
@@ -59,5 +62,35 @@ open class CallRESTMethodsUtil <T>{
     inline fun <reified T> fromJson(json: String): T{
         val type = object : TypeToken<T>(){}.type
         return Gson().fromJson<T>(json,type)
+    }
+
+    private fun checkIfRequestFailed(response: Response){
+        val code = response.code()
+        if(code == HttpURLConnection.HTTP_BAD_REQUEST ||
+           code == HttpURLConnection.HTTP_BAD_REQUEST ||
+           code == HttpURLConnection.HTTP_UNAUTHORIZED){
+            var mapErro:MapErroRetornoRest? = null
+            try {
+                val responseBody = response.body()
+                var json = ""
+                if(responseBody != null) {
+                    json = responseBody.string()
+                    log("JSON returned for failed-->> $json")
+                }
+                mapErro = fromJson<MapErroRetornoRest>(json)
+
+            }catch (e:Exception){
+                log("O retorno não foi do tipo erro ${e.message}")
+            }
+            if(mapErro != null) {
+                if (mapErro != null) {
+                    if (mapErro.type?.equals(EnumFailSystem.ERRO_VALIDACAO)!!) {
+                        throw ValidationException(mapErro.message!!)
+                    } else {
+                        throw UnaspectedErroException(mapErro.message!!)
+                    }
+                }
+            }
+        }
     }
 }

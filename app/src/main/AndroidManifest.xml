@@ -25,18 +25,13 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".activities.MainActivity">
-
-        </activity>
-        <activity android:name=".activities.LoginActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
+        <activity android:name=".activities.LoginActivity" />
         <!-- Google play service -->
-
         <meta-data
             android:name="com.google.android.gms.vision"
             android:value="@integer/google_play_services_version" />
@@ -67,7 +62,16 @@
         <activity android:name=".activities.InitialActivity" />
         <activity android:name=".activities.FormDriverActivity" />
         <activity android:name=".activities.DriverPersonalInforActivity" />
-        <activity android:name=".activities.DriverInforActivity"></activity>
+        <activity
+            android:name=".activities.DriverInforActivity"
+            android:parentActivityName=".activities.MainActivity"
+            >
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.MainActivity" />
+
+        </activity>
     </application>
 
 </manifest>

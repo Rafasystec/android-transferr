@@ -14,6 +14,7 @@ class DriverService {
     fun getDriver(id:Int): Driver {
         var json = callREST.get(urlBase+"driver/$id")
         var driver = callREST.fromJson<Driver>(json)
+        Thread.sleep(5*1000)
         return driver
     }
 }

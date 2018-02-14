@@ -5,12 +5,16 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Color
 import android.location.Location
 import android.location.LocationManager
 import android.os.Bundle
 import android.provider.Settings
 import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AlertDialog
+import android.util.Log
+import android.view.View
+import android.widget.Toast
 import br.com.transferr.R
 import br.com.transferr.extensions.setupToolbar
 import br.com.transferr.model.Car
@@ -19,6 +23,7 @@ import br.com.transferr.util.Prefes
 import br.com.transferr.webservices.CarService
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
+import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.doAsync
@@ -27,12 +32,16 @@ import org.jetbrains.anko.uiThread
 
 class MainActivity : SuperClassActivity() , GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener{
 
-
-    override fun onConnectionFailed(p0: ConnectionResult) {
-
+    private val TAG = "INITIAL_ACTIVITY"
+    override fun onConnectionFailed(connectionResult: ConnectionResult) {
+        Log.i(TAG, "Connection failed. Error: " + connectionResult.getErrorCode());
     }
 
-    override fun onLocationChanged(p0: Location?) {
+    override fun onLocationChanged(location: Location) {
+        var msg = "Updated Location: LatLon " + location.latitude + " - " + location.longitude
+        //txt_latitude.setText(""+location.latitude)
+        //txt_longitude.setText(""+location.longitude)
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
     }
 
     override fun onConnected(p0: Bundle?) {
@@ -41,27 +50,34 @@ class MainActivity : SuperClassActivity() , GoogleApiClient.ConnectionCallbacks,
         }
         stopInitLocation()
     }
+    var prefes: Prefes? = null
 
     var carService:CarService = CarService()
     private lateinit var mGoogleApiClient: GoogleApiClient
     private var mLocationManager: LocationManager? = null
+    lateinit var mLocation: Location
+    private var mLocationRequest: LocationRequest? = null
+    private val listener: com.google.android.gms.location.LocationListener? = null
+    private val UPDATE_INTERVAL = (2 * 1000).toLong()  /* 10 secs */
+    private val FASTEST_INTERVAL: Long = 2000 /* 2 sec */
     lateinit var locationManager: LocationManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        setupToolbar(R.id.toolbar)
+        setupToolbar(R.id.toolbar,"Início")
         btnFrmDriver.setOnClickListener { callFormDriver() }
         swtOnline.setOnClickListener { stopInitLocation() }
         buildLocationAPI()
-        stopInitLocation()
-        getCarFromWebService()
+        val isLoged = checkUserLogin()
+        if(isLoged) {
+            stopInitLocation()
+            getCarFromWebService()
+        }else{
+            startActivity(Intent(context,LoginActivity::class.java))
+        }
     }
-/*
-    fun callInitialActivity(){
-        val intentInit = Intent(context,InitialActivity::class.java)
-        startActivity(intentInit)
-    }
-*/
+
     private fun callFormDriver(){
         val intentInit = Intent(context,DriverInforActivity::class.java)
         startActivity(intentInit)
@@ -70,9 +86,11 @@ class MainActivity : SuperClassActivity() , GoogleApiClient.ConnectionCallbacks,
     private fun stopInitLocation(){
         if(swtOnline.isChecked){
             startService()
+            swtOnline.setTextColor(Color.BLUE)
         }else{
             toast("Vc esta off 7")
             stopService()
+            swtOnline.setTextColor(Color.BLACK)
         }
     }
 
@@ -109,7 +127,7 @@ class MainActivity : SuperClassActivity() , GoogleApiClient.ConnectionCallbacks,
     }
 
     override fun onStart() {
-        super.onStart();
+        super.onStart()
         if (mGoogleApiClient != null) {
             mGoogleApiClient.connect()
         }
@@ -117,7 +135,7 @@ class MainActivity : SuperClassActivity() , GoogleApiClient.ConnectionCallbacks,
 
     override fun onStop() {
         super.onStop()
-        if (mGoogleApiClient.isConnected()) {
+        if (mGoogleApiClient.isConnected) {
             mGoogleApiClient.disconnect()
         }
     }
@@ -157,7 +175,6 @@ class MainActivity : SuperClassActivity() , GoogleApiClient.ConnectionCallbacks,
     }
 
     private fun initScreenFields(car:Car){
-        //var car = getCarFromWebService()
         lblColorValue.text = car.color
         lblDriverValue.text= car.driver.name
         lblModelValue.text = car.model
@@ -165,14 +182,27 @@ class MainActivity : SuperClassActivity() , GoogleApiClient.ConnectionCallbacks,
     }
 
     private fun getCarFromWebService(): Unit{
-        //var driver = Driver("Dalessandro Vieira","Brazil",19800303)
-        //return Car("S-10","HHy-1356","Cinza fosco",false,driver,EnumStatus.OFFLINE)
         doAsync {
+            this@MainActivity.runOnUiThread({
+                progressBar.visibility = View.VISIBLE
+            })
             var car = carService.getCar(1)
             uiThread {
                 initScreenFields(car)
+                this@MainActivity.runOnUiThread({
+                    progressBar.visibility = View.GONE
+                })
             }
         }
+    }
+
+    private fun checkUserLogin():Boolean{
+        prefes = Prefes(this)
+        val id = prefes!!.prefsLogin
+        if(id == 0){
+            return false
+        }
+        return true
     }
 
 

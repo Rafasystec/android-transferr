@@ -6,4 +6,5 @@
     <string name="registernewuser">Cadastrar-se</string>
     <string name="btnLocation">Ver localização</string>
     <string name="name">Nome:</string>
+    <string name="exit">Sair</string>
 </resources>

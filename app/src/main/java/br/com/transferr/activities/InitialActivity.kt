@@ -71,7 +71,7 @@ class InitialActivity : SuperClassActivity(), GoogleApiClient.ConnectionCallback
     }
 
     override fun onStart() {
-        super.onStart();
+        super.onStart()
         if (mGoogleApiClient != null) {
             mGoogleApiClient.connect()
         }
@@ -90,7 +90,7 @@ class InitialActivity : SuperClassActivity(), GoogleApiClient.ConnectionCallback
     }
 
     override fun onConnectionFailed(connectionResult: ConnectionResult) {
-        Log.i(TAG, "Connection failed. Error: " + connectionResult.getErrorCode());
+        Log.i(TAG, "Connection failed. Error: " + connectionResult.getErrorCode())
     }
 
     override fun onLocationChanged(location: Location) {
