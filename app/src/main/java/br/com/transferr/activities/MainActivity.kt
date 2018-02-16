@@ -10,6 +10,7 @@ import android.location.Location
 import android.location.LocationManager
 import android.os.Bundle
 import android.provider.Settings
+import android.support.design.widget.Snackbar
 import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AlertDialog
 import android.util.Log
@@ -23,16 +24,20 @@ import br.com.transferr.util.Prefes
 import br.com.transferr.webservices.CarService
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
+import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.LocationSettingsRequest
+import kotlinx.android.synthetic.main.action_map.*
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
 
-class MainActivity : SuperClassActivity() , GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, com.google.android.gms.location.LocationListener{
+class MainActivity : SuperClassActivity() {
 
     private val TAG = "INITIAL_ACTIVITY"
+    /*
     override fun onConnectionFailed(connectionResult: ConnectionResult) {
         Log.i(TAG, "Connection failed. Error: " + connectionResult.getErrorCode());
     }
@@ -50,16 +55,17 @@ class MainActivity : SuperClassActivity() , GoogleApiClient.ConnectionCallbacks,
         }
         stopInitLocation()
     }
+    */
     var prefes: Prefes? = null
 
     var carService:CarService = CarService()
-    private lateinit var mGoogleApiClient: GoogleApiClient
-    private var mLocationManager: LocationManager? = null
+    //private lateinit var mGoogleApiClient: GoogleApiClient
+    //private var mLocationManager: LocationManager? = null
     lateinit var mLocation: Location
-    private var mLocationRequest: LocationRequest? = null
+    //private var mLocationRequest: LocationRequest? = null
     private val listener: com.google.android.gms.location.LocationListener? = null
-    private val UPDATE_INTERVAL = (2 * 1000).toLong()  /* 10 secs */
-    private val FASTEST_INTERVAL: Long = 2000 /* 2 sec */
+    //private val UPDATE_INTERVAL = (2 * 1000).toLong()  /* 10 secs */
+    //private val FASTEST_INTERVAL: Long = 2000 /* 2 sec */
     lateinit var locationManager: LocationManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -68,7 +74,8 @@ class MainActivity : SuperClassActivity() , GoogleApiClient.ConnectionCallbacks,
         setupToolbar(R.id.toolbar,"Início")
         btnFrmDriver.setOnClickListener { callFormDriver() }
         swtOnline.setOnClickListener { stopInitLocation() }
-        buildLocationAPI()
+        addActionToFloatingButtonMap()
+        //buildLocationAPI()
         val isLoged = checkUserLogin()
         if(isLoged) {
             stopInitLocation()
@@ -109,23 +116,30 @@ class MainActivity : SuperClassActivity() , GoogleApiClient.ConnectionCallbacks,
     private fun stopService(){
         stopService(Intent(this,LocationTrackingService::class.java))
     }
-
+/*
     private fun buildLocationAPI(){
         mGoogleApiClient = GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build()
+        mGoogleApiClient.connect()
+        mLocationRequest = LocationRequest()
+                .setInterval(UPDATE_INTERVAL)
+                .setFastestInterval(FASTEST_INTERVAL)
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+
         mLocationManager = this.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        checkLocation()
+
     }
+    */
 
     private fun checkLocation(): Boolean {
         if(!isLocationEnabled())
             showAlert()
         return isLocationEnabled()
     }
-
+/*
     override fun onStart() {
         super.onStart()
         if (mGoogleApiClient != null) {
@@ -139,10 +153,12 @@ class MainActivity : SuperClassActivity() , GoogleApiClient.ConnectionCallbacks,
             mGoogleApiClient.disconnect()
         }
     }
-
+*/
+    /*
     override fun onConnectionSuspended(p0: Int) {
         mGoogleApiClient.connect()
     }
+    */
 
     private fun isLocationEnabled(): Boolean {
         locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
@@ -205,5 +221,55 @@ class MainActivity : SuperClassActivity() , GoogleApiClient.ConnectionCallbacks,
         return true
     }
 
+    private fun addActionToFloatingButtonMap(){
+        actionMap.setOnClickListener {
+            startMap()
+        }
+    }
 
+    private fun startMap(){
+        startActivity(Intent(context,InitialActivity::class.java))
+    }
+/*
+    private fun getLastLocation(){
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+            return
+        }
+
+
+        startLocationUpdates()
+
+        var fusedLocationProviderClient :
+                FusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
+        fusedLocationProviderClient .getLastLocation()
+                .addOnSuccessListener(this, { location ->
+                    // Got last known location. In some rare situations this can be null.
+                    if (location != null) {
+                        // Logic to handle location object
+                        mLocation = location
+                        //txt_latitude.setText("" + mLocation.latitude)
+                        //txt_longitude.setText("" + mLocation.longitude)
+                    }
+                })
+    }
+    */
+/*
+    private fun startLocationUpdates() {
+
+        // Create the location request
+        mLocationRequest = LocationRequest.create()
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+                .setInterval(UPDATE_INTERVAL)
+                .setFastestInterval(FASTEST_INTERVAL);
+        // Request location updates
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            return
+        }
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,
+                mLocationRequest, this)
+
+    }
+
+*/
 }
