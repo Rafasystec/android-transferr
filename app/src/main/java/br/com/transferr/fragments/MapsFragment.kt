@@ -9,7 +9,6 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-
 import br.com.transferr.R
 import br.com.transferr.util.PermissionUtil
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -25,8 +24,12 @@ import android.location.Location
 import android.location.LocationManager
 import android.widget.Toast
 import br.com.transferr.extensions.log
+import br.com.transferr.helpers.HelperPassengersOnline
+import br.com.transferr.model.Quadrant
 import br.com.transferr.util.MyLocationLister
+import br.com.transferr.webservices.CoordinatePassService
 import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
 
 
 /**
@@ -63,12 +66,8 @@ class MapsFragment : SuperClassFragment(), OnMapReadyCallback,com.google.android
         map.setMinZoomPreference(12f)
         map.setOnCameraMoveListener {
             //Toast.makeText(this.context,"Vc moveu o mapa chapa",Toast.LENGTH_SHORT).show()
-
-            doAsync {
-
-                log("Vc moveu o mapa")
-                Thread.sleep(1000)
-            }
+            log("Vc moveu o mapa")
+            callWebService()
         }
         //moveCamera()
         this.map = map
@@ -127,6 +126,38 @@ class MapsFragment : SuperClassFragment(), OnMapReadyCallback,com.google.android
         }
     }
     */
+
+    private fun callWebService(){
+        var visibleRegion = map!!.projection.visibleRegion
+        var quadrant      = Quadrant()
+        if(visibleRegion != null){
+            quadrant.farLeftLat   = visibleRegion.farLeft.latitude
+            quadrant.farLeftLng   = visibleRegion.farLeft.longitude
+            quadrant.farRightLat  = visibleRegion.farRight.latitude
+            quadrant.farRightLng  = visibleRegion.farRight.longitude
+
+            quadrant.nearLeftLat  = visibleRegion.nearLeft.latitude
+            quadrant.nearLeftLng  = visibleRegion.nearLeft.longitude
+            quadrant.nearRightLat = visibleRegion.nearRight.latitude
+            quadrant.nearRightLng = visibleRegion.nearRight.longitude
+
+            doAsync {
+                var carOnlineList   = CoordinatePassService().getOnlinePassengers(quadrant)
+                uiThread {
+                    if(carOnlineList != null) {
+                        var markers = HelperPassengersOnline.transformInMarkers(carOnlineList)
+                        for (mark in markers) {
+                            map!!.addMarker(mark)
+                        }
+                    }
+                }
+            }
+
+
+        }
+
+
+    }
 
 
 }// Required empty public constructor
