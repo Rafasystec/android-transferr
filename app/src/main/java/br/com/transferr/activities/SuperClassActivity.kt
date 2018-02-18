@@ -62,8 +62,7 @@ open class SuperClassActivity : AppCompatActivity(){
     }
 
     private fun logout(){
-        var prefes = Prefes(this)
-        prefes.prefsLogin = 0
+        Prefes.prefsLogin = 0
     }
 
     private fun callLoginActivity(){

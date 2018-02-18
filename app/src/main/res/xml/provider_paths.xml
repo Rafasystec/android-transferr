@@ -1,2 +1,6 @@
-<?xml version ="1.0" encolding="utf-8" ?>
-<paths></paths>
+<?xml version="1.0" encoding="utf-8" ?>
+<paths>
+    <external-path
+        name="external_files"
+        path="."/>
+</paths>

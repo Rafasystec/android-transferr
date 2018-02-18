@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context="br.com.transferr.activities.DriverInforActivity">
-    <include layout="@layout/toolbar"/>
+    android:fillViewport="true">
+
     <ProgressBar
         style="?android:attr/progressBarStyleLarge"
         android:id="@+id/progressBar"
@@ -17,6 +15,30 @@
         android:visibility="gone"
         android:textAlignment="center"
         android:tooltipText="Loading..."/>
+
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="br.com.transferr.activities.DriverInforActivity">
+    <include layout="@layout/toolbar"/>
+
+    <ImageView
+        android:id="@+id/imgProfile"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_weight="1"
+        android:layout_gravity="center"/>
+    <ImageButton
+        android:id="@+id/btnCamera"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:src="@android:drawable/ic_menu_camera"
+        android:text="Tirar foto"
+        android:layout_gravity="center"
+        />
     <TextView
         android:id="@+id/lblDriverInfor"
         android:layout_width="match_parent"
@@ -193,3 +215,4 @@
         android:background="@drawable/button_shape"
     />
 </LinearLayout>
+</ScrollView>

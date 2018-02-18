@@ -9,7 +9,6 @@ import br.com.transferr.util.Prefes
 import kotlinx.android.synthetic.main.activity_login.*
 
 class LoginActivity : SuperClassActivity() {
-    var prefes: Prefes? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
@@ -22,10 +21,9 @@ class LoginActivity : SuperClassActivity() {
 
     private fun callService(credentials:Credentials){
         //toast("Seu usuário foi enviado ao servidor: ${credentials.login}",Toast.LENGTH_SHORT)
-        prefes = Prefes(this)
         if(txtLogin.text.toString() == "rafael" && txtPassword.text.toString() == "123456"){
             toast("Login efetuado com sucesso!")
-            prefes!!.prefsLogin = 1
+            Prefes.prefsLogin = 1
             checkUserLogin()
         }else{
             toast("Falha no login.")
@@ -34,8 +32,7 @@ class LoginActivity : SuperClassActivity() {
     }
 
     private fun checkUserLogin(){
-        prefes = Prefes(this)
-        val id = prefes!!.prefsLogin
+        val id = Prefes.prefsLogin
         if(id != 0){
             callMainActivity()
         }

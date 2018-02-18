@@ -29,8 +29,7 @@ import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
 
 class MainActivity : SuperClassActivity() {
-    private var prefes: Prefes? = null
-    //var carService:CarService = CarService()
+
     lateinit var locationManager: LocationManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -153,8 +152,7 @@ class MainActivity : SuperClassActivity() {
     }
 
     private fun checkUserLogin():Boolean{
-        prefes = Prefes(this)
-        val id = prefes!!.prefsLogin
+        val id = Prefes.prefsLogin
         if(id == 0){
             return false
         }
