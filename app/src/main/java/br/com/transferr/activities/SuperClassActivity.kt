@@ -32,7 +32,7 @@ open class SuperClassActivity : AppCompatActivity(){
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         //return super.onCreateOptionsMenu(menu)
         menuInflater.inflate(R.menu.menu_toolbar,menu)
-        toast("Criando menu")
+        Log.d("DEBUG","Creating default menu for all activities")
         return true
     }
 

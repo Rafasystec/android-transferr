@@ -2,29 +2,31 @@ package br.com.transferr.webservices
 
 import br.com.transferr.model.Quadrant
 import br.com.transferr.model.responses.ResponsePassengersOnline
-import br.com.transferr.util.CallRESTMethodsUtil
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 /**
- * Created by root on 16/02/18.
+ * Created by Rafael Rocha on 16/02/18.
  */
-class CoordinatePassService : SuperWebService(){
-    var callRESTOnline = CallRESTMethodsUtil<MutableList<ResponsePassengersOnline>>()
+object CoordinatePassService : SuperWebService(){
+    private var service: ICoordinatePassService
+    init {
+        val retrofit = Retrofit.Builder()
+                .baseUrl(CoordinatePassService.urlBase)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+        CoordinatePassService.service = retrofit.create(ICoordinatePassService::class.java)
+    }
     fun getOnlinePassengers(quadrant: Quadrant):List<ResponsePassengersOnline>{
-        var stringBuilder = StringBuilder("pass/coordinates/online/")
-        //Far points location
-        stringBuilder.append(quadrant.farLeftLng).append("/")
-        stringBuilder.append(quadrant.farLeftLat).append("/")
-        stringBuilder.append(quadrant.farRightLng).append("/")
-        stringBuilder.append(quadrant.farRightLat).append("/")
-        //Near points location
-        stringBuilder.append(quadrant.nearLeftLng).append("/")
-        stringBuilder.append(quadrant.nearLeftLat).append("/")
-        stringBuilder.append(quadrant.nearLeftLng).append("/")
-        stringBuilder.append(quadrant.nearRightLat).append("")
-        var url = urlBase+stringBuilder.toString()
-
-        //TODO comment for a while
-        var json = callRESTOnline.get(url)
-        return callRESTOnline.fromJson<MutableList<ResponsePassengersOnline>>(json)
+        val call = service.getOnlinePassengers(
+                quadrant.farLeftLng,
+                quadrant.farLeftLat,
+                quadrant.farRightLng,
+                quadrant.farRightLat,
+                quadrant.nearLeftLng,
+                quadrant.nearLeftLat,
+                quadrant.nearRightLng,
+                quadrant.nearRightLat)
+        return call.execute().body()!!
     }
 }

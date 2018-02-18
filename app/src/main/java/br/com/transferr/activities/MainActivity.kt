@@ -6,28 +6,22 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Color
-import android.location.Location
 import android.location.LocationManager
 import android.os.Bundle
 import android.provider.Settings
-import android.support.design.widget.Snackbar
 import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AlertDialog
-import android.util.Log
 import android.view.View
-import android.widget.Toast
 import br.com.transferr.R
 import br.com.transferr.extensions.setupToolbar
+import br.com.transferr.extensions.toast
 import br.com.transferr.model.Car
+import br.com.transferr.model.Driver
+import br.com.transferr.model.enums.EnumStatus
 import br.com.transferr.services.LocationTrackingService
+import br.com.transferr.util.NetworkUtil
 import br.com.transferr.util.Prefes
 import br.com.transferr.webservices.CarService
-import com.google.android.gms.common.ConnectionResult
-import com.google.android.gms.common.api.GoogleApiClient
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.location.LocationSettingsRequest
 import kotlinx.android.synthetic.main.action_map.*
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.doAsync
@@ -35,37 +29,8 @@ import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
 
 class MainActivity : SuperClassActivity() {
-
-    private val TAG = "INITIAL_ACTIVITY"
-    /*
-    override fun onConnectionFailed(connectionResult: ConnectionResult) {
-        Log.i(TAG, "Connection failed. Error: " + connectionResult.getErrorCode());
-    }
-
-    override fun onLocationChanged(location: Location) {
-        var msg = "Updated Location: LatLon " + location.latitude + " - " + location.longitude
-        //txt_latitude.setText(""+location.latitude)
-        //txt_longitude.setText(""+location.longitude)
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
-    }
-
-    override fun onConnected(p0: Bundle?) {
-        if (!isLocationPermissionGranted()) {
-            return
-        }
-        stopInitLocation()
-    }
-    */
-    var prefes: Prefes? = null
-
-    var carService:CarService = CarService()
-    //private lateinit var mGoogleApiClient: GoogleApiClient
-    //private var mLocationManager: LocationManager? = null
-    lateinit var mLocation: Location
-    //private var mLocationRequest: LocationRequest? = null
-    private val listener: com.google.android.gms.location.LocationListener? = null
-    //private val UPDATE_INTERVAL = (2 * 1000).toLong()  /* 10 secs */
-    //private val FASTEST_INTERVAL: Long = 2000 /* 2 sec */
+    private var prefes: Prefes? = null
+    //var carService:CarService = CarService()
     lateinit var locationManager: LocationManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -75,8 +40,8 @@ class MainActivity : SuperClassActivity() {
         btnFrmDriver.setOnClickListener { callFormDriver() }
         swtOnline.setOnClickListener { stopInitLocation() }
         addActionToFloatingButtonMap()
-        //buildLocationAPI()
         val isLoged = checkUserLogin()
+        checkNetwork()
         if(isLoged) {
             stopInitLocation()
             getCarFromWebService()
@@ -95,7 +60,7 @@ class MainActivity : SuperClassActivity() {
             startService()
             swtOnline.setTextColor(Color.BLUE)
         }else{
-            toast("Vc esta off 7")
+            //toast("Vc esta off 7")
             stopService()
             swtOnline.setTextColor(Color.BLACK)
         }
@@ -106,59 +71,14 @@ class MainActivity : SuperClassActivity() {
             if(!isLocationEnabled()) {
                 showAlert()
             }
-            toast("Vc agora esta online")
             startService(Intent(this, LocationTrackingService::class.java))
         }
-        toast("Vc agora esta online")
         startService(Intent(this, LocationTrackingService::class.java))
     }
 
     private fun stopService(){
         stopService(Intent(this,LocationTrackingService::class.java))
     }
-/*
-    private fun buildLocationAPI(){
-        mGoogleApiClient = GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build()
-        mGoogleApiClient.connect()
-        mLocationRequest = LocationRequest()
-                .setInterval(UPDATE_INTERVAL)
-                .setFastestInterval(FASTEST_INTERVAL)
-                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-
-        mLocationManager = this.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-
-    }
-    */
-
-    private fun checkLocation(): Boolean {
-        if(!isLocationEnabled())
-            showAlert()
-        return isLocationEnabled()
-    }
-/*
-    override fun onStart() {
-        super.onStart()
-        if (mGoogleApiClient != null) {
-            mGoogleApiClient.connect()
-        }
-    }
-
-    override fun onStop() {
-        super.onStop()
-        if (mGoogleApiClient.isConnected) {
-            mGoogleApiClient.disconnect()
-        }
-    }
-*/
-    /*
-    override fun onConnectionSuspended(p0: Int) {
-        mGoogleApiClient.connect()
-    }
-    */
 
     private fun isLocationEnabled(): Boolean {
         locationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
@@ -202,12 +122,32 @@ class MainActivity : SuperClassActivity() {
             this@MainActivity.runOnUiThread({
                 progressBar.visibility = View.VISIBLE
             })
-            var car = carService.getCar(1)
+            var car:Car? = getEmptyCar()
+            var errorMessage= ""
+            if(isConnected()) {
+                try {
+                    car = CarService.getCar(1)
+                }catch (e:Exception){
+                    errorMessage = e.message!!
+                    this@MainActivity.runOnUiThread({
+                        progressBar.visibility = View.GONE
+                    })
+                }
+            }
             uiThread {
-                initScreenFields(car)
-                this@MainActivity.runOnUiThread({
-                    progressBar.visibility = View.GONE
-                })
+                if(!errorMessage.isEmpty()){
+                    toast(errorMessage)
+                }
+                if(isConnected()) {
+                    initScreenFields(car!!)
+                    this@MainActivity.runOnUiThread({
+                        progressBar.visibility = View.GONE
+                    })
+                }else{
+                    this@MainActivity.runOnUiThread({
+                        progressBar.visibility = View.GONE
+                    })
+                }
             }
         }
     }
@@ -230,46 +170,20 @@ class MainActivity : SuperClassActivity() {
     private fun startMap(){
         startActivity(Intent(context,InitialActivity::class.java))
     }
-/*
-    private fun getLastLocation(){
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
-            return
+    private fun checkNetwork(){
+        if(!isConnected()){
+            toast("Sem internet. Por favor ative sua internet")
         }
-
-
-        startLocationUpdates()
-
-        var fusedLocationProviderClient :
-                FusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-        fusedLocationProviderClient .getLastLocation()
-                .addOnSuccessListener(this, { location ->
-                    // Got last known location. In some rare situations this can be null.
-                    if (location != null) {
-                        // Logic to handle location object
-                        mLocation = location
-                        //txt_latitude.setText("" + mLocation.latitude)
-                        //txt_longitude.setText("" + mLocation.longitude)
-                    }
-                })
-    }
-    */
-/*
-    private fun startLocationUpdates() {
-
-        // Create the location request
-        mLocationRequest = LocationRequest.create()
-                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval(UPDATE_INTERVAL)
-                .setFastestInterval(FASTEST_INTERVAL);
-        // Request location updates
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return
-        }
-        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,
-                mLocationRequest, this)
-
     }
 
-*/
+    private fun isConnected():Boolean{
+        return NetworkUtil.isNetworkAvailable(this)
+    }
+
+    private fun getEmptyCar():Car{
+        return Car("","","",false,
+                Driver("","",0),EnumStatus.OFFLINE)
+    }
+
 }

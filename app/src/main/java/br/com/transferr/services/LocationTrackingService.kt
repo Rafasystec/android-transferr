@@ -18,6 +18,7 @@ import br.com.transferr.model.Coordinates
 import br.com.transferr.model.Driver
 import br.com.transferr.model.enums.EnumStatus
 import br.com.transferr.util.MyLocationLister
+import br.com.transferr.util.NetworkUtil
 import br.com.transferr.webservices.CoordinateService
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
@@ -40,14 +41,9 @@ class LocationTrackingService : Service(),com.google.android.gms.location.Locati
     override fun onConnected(p0: Bundle?) {
         Log.d(TAG,"onConnected call")
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
             return
         }
-
-
         startLocationUpdates()
-        //var locationClient =
-
     }
 
     override fun onConnectionSuspended(p0: Int) {
@@ -60,7 +56,7 @@ class LocationTrackingService : Service(),com.google.android.gms.location.Locati
         callWebService(location)
     }
 
-    private var locationManager: LocationManager?   = null
+    //private var locationManager: LocationManager?   = null
     private lateinit var mGoogleApiClient: GoogleApiClient
     private var mLocationRequest: LocationRequest?  = null
     private val UPDATE_INTERVAL = (2 * 1000).toLong()  /* 10 secs */
@@ -71,32 +67,19 @@ class LocationTrackingService : Service(),com.google.android.gms.location.Locati
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
-        toast("starting service")
-        runs=true
+        //toast("starting service")
+        //runs=true
         return START_STICKY
     }
 
-    val TAG = "LocationTrackingService"
+    private val TAG = "LocationTrackingService"
     @SuppressLint("MissingPermission")
     override fun onCreate() {
         Log.d(TAG,"on create")
         buildLocationAPI()
-        runs = true
-        doAsync { run() }
-        //findLocation()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        toast("destroying the service 1")
-        runs=false
-    }
-
-    companion object {
-
-        var runs = true
-    }
-
+    /*
     @SuppressLint("MissingPermission")
     private fun run(){
 
@@ -104,7 +87,7 @@ class LocationTrackingService : Service(),com.google.android.gms.location.Locati
             Thread.sleep(3*1000)
             var location = locationManager?.getLastKnownLocation(LocationManager.GPS_PROVIDER)
             if(location != null) {
-                Log.d(TAG, "My Location ${location?.latitude} - ${location?.longitude}")
+                Log.d(TAG, "***********My Location ${location?.latitude} - ${location?.longitude}")
                 callWebService(location)
             }else{
                 Log.d(TAG, "Cannot get the location, it was null.")
@@ -113,7 +96,7 @@ class LocationTrackingService : Service(),com.google.android.gms.location.Locati
 
 
     }
-
+*/
     private fun callWebService(location: Location?) {
         var car: Car = getDefaultCar()
         var coordinates = Coordinates()
@@ -122,7 +105,9 @@ class LocationTrackingService : Service(),com.google.android.gms.location.Locati
         coordinates.latitude    = location?.latitude
         coordinates.longitude   = location?.longitude
         doAsync {
-            val response = CoordinateService.save(coordinates)
+            if(isConnected()) {
+                CoordinateService.save(coordinates)
+            }
         }
     }
 
@@ -173,5 +158,8 @@ class LocationTrackingService : Service(),com.google.android.gms.location.Locati
 
     }
 
+    private fun isConnected():Boolean{
+        return NetworkUtil.isNetworkAvailable(this)
+    }
 
 }
