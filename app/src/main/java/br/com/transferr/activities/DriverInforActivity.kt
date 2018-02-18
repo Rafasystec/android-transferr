@@ -56,12 +56,14 @@ class DriverInforActivity : SuperClassActivity() {
         doAsync {
             this@DriverInforActivity.runOnUiThread({
                 progressBar.visibility = View.VISIBLE
+                //layoutMain.visibility = View.GONE
             })
             var driver = driverWebService.getDriver(1)
             uiThread {
                 initScreenFields(driver)
                 this@DriverInforActivity.runOnUiThread({
                     progressBar.visibility = View.GONE
+                    //layoutMain.visibility = View.VISIBLE
                 })
             }
         }
