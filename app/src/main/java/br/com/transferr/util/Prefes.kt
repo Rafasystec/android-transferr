@@ -11,16 +11,18 @@ import br.com.transferr.application.ApplicationTransferr
 object Prefes {
     val PREFS_FILENAME      = "br.com.transferr.prefs"
     val ID_DRIVER           = "br.com.transferr.driver.id"
-    //val DRIVER              = "br.com.transferr.driver"
-    //val prefs: SharedPreferences = context.getSharedPreferences(PREFS_FILENAME, 0)
+    val ID_USER           = "br.com.transferr.user.id"
 
     private fun prefs() : SharedPreferences{
         val contex = ApplicationTransferr.getInstance().applicationContext
         return contex.getSharedPreferences(PREFS_FILENAME,0)
     }
-    var prefsLogin: Int
-        get() = prefs().getInt(ID_DRIVER,0)
-        set(value) = prefs().edit().putInt(ID_DRIVER, value).apply()
+    var prefsLogin: Long
+        get() = prefs().getLong(ID_USER,0L)
+        set(value) = prefs().edit().putLong(ID_USER, value).apply()
+    var prefsDriver: Long
+        get() = prefs().getLong(ID_DRIVER,0L)
+        set(value) = prefs().edit().putLong(ID_DRIVER, value).apply()
     //Use to save other values
     fun setInt(flag:String,value:Int) = prefs().edit().putInt(flag,value).apply()
     fun getInt(flag: String)= prefs().getInt(flag,0)

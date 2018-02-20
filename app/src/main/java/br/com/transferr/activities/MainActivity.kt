@@ -116,7 +116,7 @@ class MainActivity : SuperClassActivity() {
         lblPlacaValue.text = car.carIdentity
     }
 
-    private fun getCarFromWebService(): Unit{
+    private fun getCarFromWebService(){
         doAsync {
             this@MainActivity.runOnUiThread({
                 progressBar.visibility = View.VISIBLE
@@ -153,7 +153,7 @@ class MainActivity : SuperClassActivity() {
 
     private fun checkUserLogin():Boolean{
         val id = Prefes.prefsLogin
-        if(id == 0){
+        if(id <= 0L){
             return false
         }
         return true

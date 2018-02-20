@@ -1,6 +1,8 @@
 package br.com.transferr.webservices
 
+import android.content.Context
 import br.com.transferr.application.ApplicationTransferr
+import br.com.transferr.util.NetworkUtil
 import okhttp3.OkHttpClient
 import java.util.concurrent.TimeUnit
 
@@ -14,4 +16,8 @@ open class SuperWebService {
             .writeTimeout(5,TimeUnit.SECONDS)
             .readTimeout(5,TimeUnit.SECONDS)
             .build()
+
+    protected fun isConnected():Boolean{
+        return NetworkUtil.isNetworkAvailable(ApplicationTransferr.getInstance().applicationContext)
+    }
 }

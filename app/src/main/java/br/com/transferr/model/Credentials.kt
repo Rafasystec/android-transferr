@@ -5,16 +5,16 @@ package br.com.transferr.model
  */
 class Credentials(login:String, password:String) {
 
-    val login:String
+    val username:String
     val password:String
 
     init {
-        this.login      = login
+        this.username      = login
         this.password   = password
     }
 
     override fun toString(): String {
-        return "Credentials login is $login"
+        return "Credentials login is $username"
     }
 
 }
