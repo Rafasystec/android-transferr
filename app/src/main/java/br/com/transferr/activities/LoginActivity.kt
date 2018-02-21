@@ -10,20 +10,16 @@ import br.com.transferr.model.responses.ResponseLogin
 import br.com.transferr.util.Prefes
 import br.com.transferr.webservices.UserService
 import kotlinx.android.synthetic.main.activity_login.*
-import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
 
 class LoginActivity : SuperClassActivity() {
 
-
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
         btnRegister.setOnClickListener{
-            val credentials = Credentials(txtLogin.text.toString(),txtPassword.text.toString())
-            callService(credentials)
+            callService()
         }
         checkUserLogin()
     }
@@ -41,7 +37,7 @@ class LoginActivity : SuperClassActivity() {
         return true
     }
 
-    private fun callService(credentials:Credentials){
+    private fun callService(){
        if(validate()){
            var loginResponse = ResponseLogin()
            var msgError      = ""
@@ -53,6 +49,9 @@ class LoginActivity : SuperClassActivity() {
                     loginResponse = UserService.doLogin(getCredentialsFromForm())
                }catch (e:Exception){
                    msgError = e.message!!
+                   this@LoginActivity.runOnUiThread({
+                       progressBar.visibility = View.GONE
+                   })
                }
                uiThread {
                    this@LoginActivity.runOnUiThread({

@@ -1,20 +1,29 @@
 package br.com.transferr.webservices
 
 import br.com.transferr.application.ApplicationTransferr
+import br.com.transferr.model.AnexoPhoto
 import br.com.transferr.model.Car
 import br.com.transferr.model.Driver
+import br.com.transferr.model.responses.ResponseOK
 import br.com.transferr.util.CallRESTMethodsUtil
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.Body
 
 /**
  * Created by root on 12/02/18.
  */
-class DriverService {
-    private var urlBase = ApplicationTransferr.getInstance().URL_BASE
-    var callREST = CallRESTMethodsUtil<Driver>()
+object DriverService :SuperWebService(){
+    private var service: IDriverService = retrofit.create(IDriverService::class.java)
+
     fun getDriver(id:Int): Driver {
-        var json = callREST.get(urlBase+"driver/$id")
-        var driver = callREST.fromJson<Driver>(json)
-        Thread.sleep(5*1000)
-        return driver
+        return service.getDriver(id).execute().body()!!
+    }
+
+    fun savePhoto(anexoPhoto: AnexoPhoto): ResponseOK?{
+        if(isConnected()) {
+            return service.savePhoto(anexoPhoto).execute().body()
+        }
+        return null
     }
 }

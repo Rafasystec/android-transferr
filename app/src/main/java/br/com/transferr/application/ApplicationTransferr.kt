@@ -7,7 +7,9 @@ import android.app.Application
  */
 class ApplicationTransferr : Application() {
     private val TAG = "APPLICATION"
-    val URL_BASE = "http://192.168.15.2:8080/transferr-rest/rest/"
+    private val base = "http://192.168.15.7:8080/"
+    val URL_BASE        = base +"transferr-rest/rest/"
+    val URL_BASE_IMG    = base +"files/"
     //val URL_BASE = "http://192.168.0.102:8080/transferr-rest/rest/"
     override fun onCreate() {
         super.onCreate()

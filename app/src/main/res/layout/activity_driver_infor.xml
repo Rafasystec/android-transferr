@@ -38,7 +38,7 @@
             android:layout_height="100dp"
             android:layout_weight="1"
             android:layout_gravity="center"
-            android:background="@drawable/circle"/>
+            />
         <ImageButton
             android:id="@+id/btnCamera"
             android:layout_width="60dp"

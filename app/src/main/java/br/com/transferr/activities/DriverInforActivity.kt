@@ -2,48 +2,39 @@ package br.com.transferr.activities
 
 import android.app.Activity
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Environment
-import android.os.PersistableBundle
-import android.provider.MediaStore
-import android.support.v4.content.FileProvider
 import android.view.View
 import br.com.transferr.R
+import br.com.transferr.application.ApplicationTransferr
 import br.com.transferr.extensions.log
 import br.com.transferr.extensions.setupToolbar
+import br.com.transferr.extensions.toast
+import br.com.transferr.helpers.HelperCamera
+import br.com.transferr.model.AnexoPhoto
 import br.com.transferr.model.Driver
+import br.com.transferr.model.responses.ResponseOK
 import br.com.transferr.util.ImageUtil
+import br.com.transferr.util.Prefes
 import br.com.transferr.webservices.DriverService
+import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.activity_driver_infor.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
-import kotlinx.android.synthetic.main.activity_driver_infor.*
 import java.io.File
 
 class DriverInforActivity : SuperClassActivity() {
-
+    val camera = HelperCamera()
+    val photoName = "photoProfile.jpg"
     var file:File? = null
-    var driverWebService:DriverService = DriverService()
+    var driver = Driver("","",0)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_driver_infor)
         btnAlterPass.setOnClickListener { callRestAlterPassword() }
         getDriverFromWebService()
         setupToolbar(R.id.toolbar,"Meus Dados",true)
-        btnCamera.setOnClickListener {
-            file = getSdCardFile("photoProfile.jpg")
-            log("Camera file $file")
-            val i = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-            val uri = FileProvider.getUriForFile(context,context.applicationContext.packageName+".provider",file)
-            i.putExtra(MediaStore.EXTRA_OUTPUT,uri)
-            startActivityForResult(i,0)
-        }
-        if(savedInstanceState != null){
-            //Se girou a tela recuper ao estado
-            file = savedInstanceState.getSerializable("file") as File
-            showImage(file)
-        }
-        //supportActionBar?.setDisplayShowHomeEnabled(true)
+        initViews()
+        camera.init(savedInstanceState)
     }
 
     private fun initScreenFields(driver:Driver){
@@ -58,33 +49,24 @@ class DriverInforActivity : SuperClassActivity() {
                 progressBar.visibility = View.VISIBLE
                 //layoutMain.visibility = View.GONE
             })
-            var driver = driverWebService.getDriver(1)
+            driver = DriverService.getDriver(1)
             uiThread {
                 initScreenFields(driver)
                 this@DriverInforActivity.runOnUiThread({
                     progressBar.visibility = View.GONE
-                    //layoutMain.visibility = View.VISIBLE
                 })
             }
         }
-
     }
 
     private fun callRestAlterPassword(){
 
     }
 
-    private fun getSdCardFile(fileName:String): File{
-        val sdCardDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-        if(!sdCardDir.exists()){
-            sdCardDir.mkdir()
-        }
-        return File(sdCardDir,fileName)
-    }
-
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putSerializable("file",file)
+        //outState.putSerializable("file",file)
+        camera.onSaveInstanceState(outState)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -92,7 +74,12 @@ class DriverInforActivity : SuperClassActivity() {
         log("result code: $resultCode")
         if(resultCode == Activity.RESULT_OK){
             //Se a camera retornou vamos mostar o arquivo da foto
-            showImage(file)
+            val bitmap = camera.getBitmap(600,600)
+            if(bitmap != null) {
+                camera.save(bitmap)
+                showImage(camera.file)
+                postImageProfile()
+            }
         }
     }
 
@@ -104,5 +91,43 @@ class DriverInforActivity : SuperClassActivity() {
             val bitmap = ImageUtil.resize(file,w,h)
             imgProfile.setImageBitmap(bitmap)
         }
+    }
+
+    private fun initViews(){
+        btnCamera.setOnClickListener{btnCameraClick()}
+        loadPhoto(Prefes.ID_CAR)
+    }
+
+    private fun loadPhoto(idCar:String){
+        var url = ApplicationTransferr.getInstance().URL_BASE_IMG + "/car/$idCar"+"/$photoName"
+        Picasso.with(this).load(url).into(imgProfile)
+    }
+
+    private fun btnCameraClick(){
+        startActivityForResult(camera.open(this,photoName),0)
+    }
+
+   // val dialog = ProgressDialog.show(this,"Salvando","Salvando imagem. Aguarde.",false,true)
+    private fun postImageProfile(){
+        var anexoPhoto = AnexoPhoto()
+        doAsync {
+            var response:ResponseOK? = null
+            var msgError:String? = ""
+            try {
+                response = DriverService.savePhoto(anexoPhoto)
+            }catch (e:Exception){
+                msgError = e.message
+            }
+            uiThread {
+                if(response != null) {
+                    toast("Imagem salva")
+                }else{
+                    toast("Erro ao tentar salvar a imagem $msgError")
+                }
+                //dialog.dismiss()
+                finish()
+            }
+        }
+
     }
 }

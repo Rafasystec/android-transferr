@@ -126,6 +126,7 @@ class MainActivity : SuperClassActivity() {
             if(isConnected()) {
                 try {
                     car = CarService.getCar(1)
+                    Prefes.prefsCar = car.id!!
                 }catch (e:Exception){
                     errorMessage = e.message!!
                     this@MainActivity.runOnUiThread({
@@ -153,7 +154,8 @@ class MainActivity : SuperClassActivity() {
 
     private fun checkUserLogin():Boolean{
         val id = Prefes.prefsLogin
-        if(id <= 0L){
+        val idZero:Long = 0
+        if(id == null || id <= 0){
             return false
         }
         return true

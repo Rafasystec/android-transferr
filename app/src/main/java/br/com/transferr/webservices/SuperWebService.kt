@@ -4,6 +4,8 @@ import android.content.Context
 import br.com.transferr.application.ApplicationTransferr
 import br.com.transferr.util.NetworkUtil
 import okhttp3.OkHttpClient
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import java.util.concurrent.TimeUnit
 
 /**
@@ -15,6 +17,12 @@ open class SuperWebService {
             .connectTimeout(10,TimeUnit.SECONDS)
             .writeTimeout(5,TimeUnit.SECONDS)
             .readTimeout(5,TimeUnit.SECONDS)
+            .build()
+
+    protected val retrofit = Retrofit.Builder()
+            .baseUrl(urlBase)
+            .addConverterFactory(GsonConverterFactory.create())
+            .client(httpClient)
             .build()
 
     protected fun isConnected():Boolean{
