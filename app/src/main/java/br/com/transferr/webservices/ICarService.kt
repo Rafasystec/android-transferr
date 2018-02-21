@@ -10,5 +10,5 @@ import retrofit2.http.Path
  */
 interface ICarService {
     @GET("car/{id}")
-    fun getCar(@Path("id") id:Int):Call<Car>
+    fun getCar(@Path("id") id:Long):Call<Car>
 }

@@ -26,5 +26,9 @@ object CarService : SuperWebService(){
         return call.execute().body()!!
     }
 
+    fun getService(): ICarService{
+        return service
+    }
+
 
 }

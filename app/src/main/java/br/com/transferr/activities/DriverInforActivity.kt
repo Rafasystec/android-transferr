@@ -16,6 +16,7 @@ import br.com.transferr.model.responses.ResponseOK
 import br.com.transferr.util.ImageUtil
 import br.com.transferr.util.Prefes
 import br.com.transferr.webservices.DriverService
+import br.com.transferr.webservices.UserService
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_driver_infor.*
 import org.jetbrains.anko.doAsync
@@ -23,8 +24,8 @@ import org.jetbrains.anko.uiThread
 import java.io.File
 
 class DriverInforActivity : SuperClassActivity() {
-    val camera = HelperCamera()
-    val photoName = "photoProfile.jpg"
+    val camera      = HelperCamera()
+    val photoName   = "photoProfile.jpg"
     var file:File? = null
     var driver = Driver("","",0)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -95,6 +96,7 @@ class DriverInforActivity : SuperClassActivity() {
 
     private fun initViews(){
         btnCamera.setOnClickListener{btnCameraClick()}
+        btnAlterPass.setOnClickListener{btnAlterPassClick()}
         loadPhoto(Prefes.ID_CAR)
     }
 
@@ -105,6 +107,58 @@ class DriverInforActivity : SuperClassActivity() {
 
     private fun btnCameraClick(){
         startActivityForResult(camera.open(this,photoName),0)
+    }
+
+    private fun btnAlterPassClick(){
+        if(validate()){
+            callServiceToChangeThePassword()
+        }
+    }
+
+    private fun validate():Boolean{
+        val oldPassword = txtOldPassword.text.toString().trim()
+        val newPassword = txtNewPassword.text.toString().trim()
+        val confPassword= txtConfirmNewPassword.text.toString().trim()
+        if(oldPassword.isEmpty()){
+            toast("Por favor informe a sua senha antiga!")
+            return false
+        }else if(newPassword.isEmpty()){
+            toast("Por favor informe a nova senha!")
+            return false
+        }else if(confPassword.isEmpty()){
+            toast("Por favor confirme a senha!")
+            return false
+        }else{
+            if(oldPassword == newPassword){
+                toast("Por favor informe uma senha diferente da sua antiga")
+                return false
+            }
+            if(newPassword != confPassword){
+                toast("As senhas não conferem!")
+                return false
+            }
+        }
+        return true
+    }
+
+    private fun callServiceToChangeThePassword(){
+        doAsync {
+            var message = ""
+            var response:ResponseOK? = null
+            try {
+                response = UserService.changePassword(Prefes.prefsLogin,
+                        txtOldPassword.text.toString(),
+                        txtNewPassword.text.toString())
+            }catch (e:Exception){
+                message = e.message!!
+                toast("Erro ao tentar alterar a senha ${e.message}")
+            }
+            uiThread {
+                if(response != null){
+                    toast("Senha alterada com sucesso!")
+                }
+            }
+        }
     }
 
    // val dialog = ProgressDialog.show(this,"Salvando","Salvando imagem. Aguarde.",false,true)

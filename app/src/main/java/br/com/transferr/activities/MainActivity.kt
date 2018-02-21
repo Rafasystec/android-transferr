@@ -18,6 +18,7 @@ import br.com.transferr.extensions.toast
 import br.com.transferr.model.Car
 import br.com.transferr.model.Driver
 import br.com.transferr.model.enums.EnumStatus
+import br.com.transferr.model.responses.ResponseLogin
 import br.com.transferr.services.LocationTrackingService
 import br.com.transferr.util.NetworkUtil
 import br.com.transferr.util.Prefes
@@ -27,6 +28,9 @@ import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
 import org.jetbrains.anko.uiThread
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class MainActivity : SuperClassActivity() {
 
@@ -117,6 +121,25 @@ class MainActivity : SuperClassActivity() {
     }
 
     private fun getCarFromWebService(){
+
+        CarService.getService().getCar(Prefes.prefsCar).enqueue(
+                object : Callback<Car> {
+                    override fun onFailure(call: Call<Car>?, t: Throwable?) {
+                        stopProgressBar()
+                        toast("Erro ao logar ${t?.message}")
+                    }
+
+                    override fun onResponse(call: Call<Car>?, response: Response<Car>?) {
+                        if(response?.isSuccessful!!){
+                            response.body().let {
+
+                            }
+                        }
+                    }
+
+                }
+        )
+        /*
         doAsync {
             this@MainActivity.runOnUiThread({
                 progressBar.visibility = View.VISIBLE
@@ -150,6 +173,7 @@ class MainActivity : SuperClassActivity() {
                 }
             }
         }
+        */
     }
 
     private fun checkUserLogin():Boolean{
@@ -184,6 +208,23 @@ class MainActivity : SuperClassActivity() {
     private fun getEmptyCar():Car{
         return Car("","","",false,
                 Driver("","",0),EnumStatus.OFFLINE)
+    }
+
+    override fun onBackPressed() {
+        super.onBackPressed()
+        finish()
+    }
+
+    private fun initProgressBar(){
+        this@MainActivity.runOnUiThread({
+            progressBar.visibility = View.VISIBLE
+        })
+    }
+
+    private fun stopProgressBar(){
+        this@MainActivity.runOnUiThread({
+            progressBar.visibility = View.GONE
+        })
     }
 
 }

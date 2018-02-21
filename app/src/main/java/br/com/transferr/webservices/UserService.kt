@@ -4,8 +4,13 @@ package br.com.transferr.webservices
 import android.content.Context
 import br.com.transferr.model.Credentials
 import br.com.transferr.model.responses.ResponseLogin
+import br.com.transferr.model.responses.ResponseOK
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.Path
 
 /**
  * Created by root on 20/02/18.
@@ -19,7 +24,8 @@ object UserService :SuperWebService(){
                 .addConverterFactory(GsonConverterFactory.create())
                 .client(UserService.httpClient)
                 .build()
-        UserService.service = retrofit.create(IUserService::class.java)
+        service = retrofit.create(IUserService::class.java)
+
     }
 
     fun doLogin(credentials: Credentials):ResponseLogin{
@@ -29,5 +35,23 @@ object UserService :SuperWebService(){
             response = callLogin.execute().body()!!
         }
         return response!!
+    }
+
+    fun changePassword(idUser:Long, actualPassword:String, newPassword:String ):ResponseOK?{
+        if(isConnected()){
+            return service.changePassword(idUser,actualPassword,newPassword).execute().body()
+        }
+        return null
+    }
+
+    fun recoverPassword(email:String):ResponseOK?{
+        if(isConnected()){
+            return service.recoverPassword(email).execute().body()
+        }
+        return null
+    }
+
+    fun getService(): IUserService{
+        return service
     }
 }
