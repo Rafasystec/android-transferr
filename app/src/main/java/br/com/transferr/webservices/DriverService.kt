@@ -1,9 +1,12 @@
 package br.com.transferr.webservices
 
 import br.com.transferr.application.ApplicationTransferr
+import br.com.transferr.helpers.HelperCallBackWebService
 import br.com.transferr.model.AnexoPhoto
 import br.com.transferr.model.Car
 import br.com.transferr.model.Driver
+import br.com.transferr.model.responses.OnResponseInterface
+import br.com.transferr.model.responses.ResponseLogin
 import br.com.transferr.model.responses.ResponseOK
 import br.com.transferr.util.CallRESTMethodsUtil
 import retrofit2.Retrofit
@@ -16,8 +19,8 @@ import retrofit2.http.Body
 object DriverService :SuperWebService(){
     private var service: IDriverService = retrofit.create(IDriverService::class.java)
 
-    fun getDriver(id:Int): Driver {
-        return service.getDriver(id).execute().body()!!
+    fun getDriver(id:Int,responseInterface: OnResponseInterface<Driver>) {
+        return service.getDriver(id).enqueue(HelperCallBackWebService(responseInterface))
     }
 
     fun savePhoto(anexoPhoto: AnexoPhoto): ResponseOK?{
@@ -25,5 +28,9 @@ object DriverService :SuperWebService(){
             return service.savePhoto(anexoPhoto).execute().body()
         }
         return null
+    }
+
+    fun getDriverByCar(id:Long,responseInterface: OnResponseInterface<Driver>){
+        return service.getDriverByCar(id).enqueue(HelperCallBackWebService(responseInterface))
     }
 }

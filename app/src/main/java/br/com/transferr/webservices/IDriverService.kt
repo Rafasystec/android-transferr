@@ -18,4 +18,6 @@ interface IDriverService  {
     fun savePhoto(@Body anexoPhoto: AnexoPhoto):Call<ResponseOK>
     @GET("driver/{id}")
     fun getDriver(@Path("id") id:Int): Call<Driver>
+    @GET("driver/by/car/{id}")
+    fun getDriverByCar(@Path("id") id:Long): Call<Driver>
 }

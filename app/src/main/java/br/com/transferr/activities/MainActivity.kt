@@ -18,10 +18,12 @@ import br.com.transferr.extensions.toast
 import br.com.transferr.model.Car
 import br.com.transferr.model.Driver
 import br.com.transferr.model.enums.EnumStatus
+import br.com.transferr.model.responses.OnResponseInterface
 import br.com.transferr.model.responses.ResponseLogin
 import br.com.transferr.services.LocationTrackingService
 import br.com.transferr.util.NetworkUtil
 import br.com.transferr.util.Prefes
+import br.com.transferr.util.VariablesUtil
 import br.com.transferr.webservices.CarService
 import kotlinx.android.synthetic.main.action_map.*
 import kotlinx.android.synthetic.main.activity_main.*
@@ -35,11 +37,14 @@ import retrofit2.Response
 class MainActivity : SuperClassActivity() {
 
     lateinit var locationManager: LocationManager
-
+    var car:Car?=null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setupToolbar(R.id.toolbar,"Início")
+        initView()
+    }
+    private fun initView(){
         btnFrmDriver.setOnClickListener { callFormDriver() }
         swtOnline.setOnClickListener { stopInitLocation() }
         addActionToFloatingButtonMap()
@@ -55,6 +60,10 @@ class MainActivity : SuperClassActivity() {
 
     private fun callFormDriver(){
         val intentInit = Intent(context,DriverInforActivity::class.java)
+        var bundle = Bundle()
+        bundle.putParcelable(VariablesUtil.MY_CAR,car)
+        intentInit.putExtra("bundle",bundle)
+        //intentInit.putExtra(VariablesUtil.MY_CAR,car)
         startActivity(intentInit)
     }
 
@@ -63,7 +72,6 @@ class MainActivity : SuperClassActivity() {
             startService()
             swtOnline.setTextColor(Color.BLUE)
         }else{
-            //toast("Vc esta off 7")
             stopService()
             swtOnline.setTextColor(Color.BLACK)
         }
@@ -114,66 +122,36 @@ class MainActivity : SuperClassActivity() {
     }
 
     private fun initScreenFields(car:Car){
+        this.car = car
+        Prefes.prefsCar = car.id!!
         lblColorValue.text = car.color
-        lblDriverValue.text= car.driver.name
+        lblDriverValue.text= car.driver?.name
         lblModelValue.text = car.model
         lblPlacaValue.text = car.carIdentity
     }
 
     private fun getCarFromWebService(){
+        initProgressBar()
+        CarService.getCarByUser(Prefes.prefsLogin,
+            object: OnResponseInterface<Car>{
+                    override fun onSuccess(car: Car?) {
+                        stopProgressBar()
+                        initScreenFields(car!!)
+                    }
 
-        CarService.getService().getCar(Prefes.prefsCar).enqueue(
-                object : Callback<Car> {
-                    override fun onFailure(call: Call<Car>?, t: Throwable?) {
+                    override fun onError(message: String) {
+                        stopProgressBar()
+                        toast(message)
+                    }
+
+                    override fun onFailure(t: Throwable?) {
                         stopProgressBar()
                         toast("Erro ao logar ${t?.message}")
                     }
 
-                    override fun onResponse(call: Call<Car>?, response: Response<Car>?) {
-                        if(response?.isSuccessful!!){
-                            response.body().let {
-
-                            }
-                        }
-                    }
-
-                }
+            }
         )
-        /*
-        doAsync {
-            this@MainActivity.runOnUiThread({
-                progressBar.visibility = View.VISIBLE
-            })
-            var car:Car? = getEmptyCar()
-            var errorMessage= ""
-            if(isConnected()) {
-                try {
-                    car = CarService.getCar(1)
-                    Prefes.prefsCar = car.id!!
-                }catch (e:Exception){
-                    errorMessage = e.message!!
-                    this@MainActivity.runOnUiThread({
-                        progressBar.visibility = View.GONE
-                    })
-                }
-            }
-            uiThread {
-                if(!errorMessage.isEmpty()){
-                    toast(errorMessage)
-                }
-                if(isConnected()) {
-                    initScreenFields(car!!)
-                    this@MainActivity.runOnUiThread({
-                        progressBar.visibility = View.GONE
-                    })
-                }else{
-                    this@MainActivity.runOnUiThread({
-                        progressBar.visibility = View.GONE
-                    })
-                }
-            }
-        }
-        */
+
     }
 
     private fun checkUserLogin():Boolean{
@@ -203,11 +181,6 @@ class MainActivity : SuperClassActivity() {
 
     private fun isConnected():Boolean{
         return NetworkUtil.isNetworkAvailable(this)
-    }
-
-    private fun getEmptyCar():Car{
-        return Car("","","",false,
-                Driver("","",0),EnumStatus.OFFLINE)
     }
 
     override fun onBackPressed() {

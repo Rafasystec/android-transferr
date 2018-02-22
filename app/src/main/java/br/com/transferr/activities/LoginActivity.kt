@@ -5,7 +5,9 @@ import android.os.Bundle
 import android.view.View
 import br.com.transferr.R
 import br.com.transferr.extensions.toast
+import br.com.transferr.helpers.HelperCallBackWebService
 import br.com.transferr.model.Credentials
+import br.com.transferr.model.responses.OnResponseInterface
 import br.com.transferr.model.responses.ResponseLogin
 import br.com.transferr.model.responses.ResponseOK
 import br.com.transferr.util.Prefes
@@ -23,7 +25,7 @@ class LoginActivity : SuperClassActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
         btnRegister.setOnClickListener{
-            callService()
+            requestLogin()
         }
         btnRecoverPass.setOnClickListener{
             callServiceToRecoverPassword()
@@ -45,33 +47,28 @@ class LoginActivity : SuperClassActivity() {
         return true
     }
 
-    private fun callService(){
-       if(validate()){
+    private fun requestLogin(){
+        if(validate()){
             initProgressBar()
-           UserService.getService().doLogin(getCredentialsFromForm()).enqueue(
-                   object : Callback<ResponseLogin> {
-                       override fun onResponse(call: Call<ResponseLogin>?, response: Response<ResponseLogin>?) {
-                           stopProgressBar()
-                            if(response != null && response.isSuccessful){
-                                response?.let {
-                                    executeLogin(it.body()?.user?.id!!)
-                                }
-                            }else if(response != null){
-                               toast(RestUtil<ResponseLogin>().getErroMessage(response))
-                            }
-                       }
+            UserService.doLogin(getCredentialsFromForm(),
+                object : OnResponseInterface<ResponseLogin>{
+                    override fun onSuccess(body: ResponseLogin?) {
+                        executeLogin(body?.user?.id!!)
+                    }
+                    override fun onError(message: String) {
+                        stopProgressBar()
+                        toast(message)
+                    }
+                    override fun onFailure(t: Throwable?) {
+                        stopProgressBar()
+                        toast(t?.message!!)
+                    }
 
-                       override fun onFailure(call: Call<ResponseLogin>?, t: Throwable?) {
-                           stopProgressBar()
-                            toast("Erro ao logar ${t?.message}")
-                       }
-
+                }
+            )
 
 
-                   }
-           )
-
-       }
+        }
 
     }
 

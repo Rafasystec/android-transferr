@@ -42,3 +42,11 @@ fun AppCompatActivity.addFragment(@IdRes layoutId:Int, fragment: Fragment){
     ft.add(layoutId,fragment)
     ft.commit()
 }
+
+fun Activity.showError(message: CharSequence) {
+    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+}
+
+fun Activity.showValidation(message: CharSequence) {
+    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+}

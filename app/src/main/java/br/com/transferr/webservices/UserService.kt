@@ -2,7 +2,9 @@ package br.com.transferr.webservices
 
 
 import android.content.Context
+import br.com.transferr.helpers.HelperCallBackWebService
 import br.com.transferr.model.Credentials
+import br.com.transferr.model.responses.OnResponseInterface
 import br.com.transferr.model.responses.ResponseLogin
 import br.com.transferr.model.responses.ResponseOK
 import retrofit2.Call
@@ -28,14 +30,15 @@ object UserService :SuperWebService(){
 
     }
 
-    fun doLogin(credentials: Credentials):ResponseLogin{
-        var response = ResponseLogin()
-        if(isConnected()) {
-            val callLogin = service.doLogin(credentials)
-            response = callLogin.execute().body()!!
-        }
-        return response!!
+    fun doLogin(credentials: Credentials,responseInterface: OnResponseInterface<ResponseLogin>){
+
+        service.doLogin(credentials).enqueue(
+                HelperCallBackWebService(responseInterface)
+        )
+
+
     }
+
 
     fun changePassword(idUser:Long, actualPassword:String, newPassword:String ):ResponseOK?{
         if(isConnected()){

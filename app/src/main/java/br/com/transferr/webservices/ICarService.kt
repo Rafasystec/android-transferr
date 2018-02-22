@@ -11,4 +11,6 @@ import retrofit2.http.Path
 interface ICarService {
     @GET("car/{id}")
     fun getCar(@Path("id") id:Long):Call<Car>
+    @GET("car/by/user/{idUser}")
+    fun getCarByUser(@Path("idUser") id:Long):Call<Car>
 }

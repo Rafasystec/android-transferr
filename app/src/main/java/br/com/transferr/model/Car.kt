@@ -1,22 +1,21 @@
 package br.com.transferr.model
 
+import android.os.Parcel
 import br.com.transferr.model.enums.EnumStatus
 
 /**
  * Created by idoctor on 08/02/2018.
  */
-data class Car(var model: String,
-               var carIdentity: String,
-               var color:String,
-                var externalEquip:Boolean,
-               var driver:Driver,
-               var status:EnumStatus) : Entity(){
+class Car : Entity(){
 
-    //private val model: String? = null
-    //private val carIdentity: String? = null
-    //private val color: String? = null
-    //private val externalEquip: Boolean? = null
-    //private val driver: Driver? = null
-    //private val status: EnumStatus? = null
+
+    var model: String? = ""
+    var carIdentity: String?=null
+    var color:String?=null
+    var externalEquip:Boolean = false
+    var driver:Driver?= null
+    var status:EnumStatus=EnumStatus.OFFLINE
 
 }
+
+

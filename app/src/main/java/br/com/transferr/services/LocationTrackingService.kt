@@ -56,7 +56,7 @@ class LocationTrackingService : Service(),com.google.android.gms.location.Locati
         callWebService(location)
     }
 
-    //private var locationManager: LocationManager?   = null
+
     private lateinit var mGoogleApiClient: GoogleApiClient
     private var mLocationRequest: LocationRequest?  = null
     private val UPDATE_INTERVAL = (2 * 1000).toLong()  /* 10 secs */
@@ -79,26 +79,8 @@ class LocationTrackingService : Service(),com.google.android.gms.location.Locati
         buildLocationAPI()
     }
 
-    /*
-    @SuppressLint("MissingPermission")
-    private fun run(){
-
-        while (runs){
-            Thread.sleep(3*1000)
-            var location = locationManager?.getLastKnownLocation(LocationManager.GPS_PROVIDER)
-            if(location != null) {
-                Log.d(TAG, "***********My Location ${location?.latitude} - ${location?.longitude}")
-                callWebService(location)
-            }else{
-                Log.d(TAG, "Cannot get the location, it was null.")
-            }
-        }
-
-
-    }
-*/
     private fun callWebService(location: Location?) {
-        var car: Car = getDefaultCar()
+        var car:Car? =null
         var coordinates = Coordinates()
         coordinates.id = 0
         coordinates.car         = car
@@ -111,11 +93,7 @@ class LocationTrackingService : Service(),com.google.android.gms.location.Locati
         }
     }
 
-    private fun getDefaultCar(): Car {
-        var driver: Driver = Driver("Jose","664764", 19880305)
-        var car:Car = Car("cheve","2215563","azul",true,driver, EnumStatus.OFFLINE)
-        return car
-    }
+
 
     @SuppressLint("MissingPermission")
     private fun buildLocationAPI(){

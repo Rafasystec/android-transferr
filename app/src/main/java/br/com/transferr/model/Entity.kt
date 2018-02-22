@@ -6,7 +6,7 @@ import android.os.Parcelable
 /**
  * Created by idoctor on 08/02/2018.
  */
-open class Entity() : Parcelable{
+open class Entity() : Parcelable {
      var id: Long? = 1
 
     constructor(parcel: Parcel) : this() {

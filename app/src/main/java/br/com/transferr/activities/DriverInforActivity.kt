@@ -6,12 +6,11 @@ import android.os.Bundle
 import android.view.View
 import br.com.transferr.R
 import br.com.transferr.application.ApplicationTransferr
-import br.com.transferr.extensions.log
-import br.com.transferr.extensions.setupToolbar
-import br.com.transferr.extensions.toast
+import br.com.transferr.extensions.*
 import br.com.transferr.helpers.HelperCamera
 import br.com.transferr.model.AnexoPhoto
 import br.com.transferr.model.Driver
+import br.com.transferr.model.responses.OnResponseInterface
 import br.com.transferr.model.responses.ResponseOK
 import br.com.transferr.util.ImageUtil
 import br.com.transferr.util.Prefes
@@ -24,15 +23,12 @@ import org.jetbrains.anko.uiThread
 import java.io.File
 
 class DriverInforActivity : SuperClassActivity() {
-    val camera      = HelperCamera()
-    val photoName   = "photoProfile.jpg"
+    private val camera      = HelperCamera()
+    private val photoName   = "photoProfile.jpg"
     var file:File? = null
-    var driver = Driver("","",0)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_driver_infor)
-        btnAlterPass.setOnClickListener { callRestAlterPassword() }
-        getDriverFromWebService()
         setupToolbar(R.id.toolbar,"Meus Dados",true)
         initViews()
         camera.init(savedInstanceState)
@@ -44,25 +40,6 @@ class DriverInforActivity : SuperClassActivity() {
         lblDtNascimentoValue.text   = driver.birthDate.toString()
     }
 
-    private fun getDriverFromWebService(){
-        doAsync {
-            this@DriverInforActivity.runOnUiThread({
-                progressBar.visibility = View.VISIBLE
-                //layoutMain.visibility = View.GONE
-            })
-            driver = DriverService.getDriver(1)
-            uiThread {
-                initScreenFields(driver)
-                this@DriverInforActivity.runOnUiThread({
-                    progressBar.visibility = View.GONE
-                })
-            }
-        }
-    }
-
-    private fun callRestAlterPassword(){
-
-    }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -97,6 +74,7 @@ class DriverInforActivity : SuperClassActivity() {
     private fun initViews(){
         btnCamera.setOnClickListener{btnCameraClick()}
         btnAlterPass.setOnClickListener{btnAlterPassClick()}
+        getDriver()
         loadPhoto(Prefes.ID_CAR)
     }
 
@@ -184,4 +162,50 @@ class DriverInforActivity : SuperClassActivity() {
         }
 
     }
+
+    private fun initProgressBar(){
+        this@DriverInforActivity.runOnUiThread({
+            progressBar.visibility = View.VISIBLE
+        })
+    }
+
+    private fun stopProgressBar(){
+        this@DriverInforActivity.runOnUiThread({
+            progressBar.visibility = View.GONE
+        })
+    }
+
+
+    private fun getDriver(){
+        initProgressBar()
+        DriverService.getDriverByCar(Prefes.prefsCar,
+                object : OnResponseInterface<Driver>{
+                    override fun onSuccess(driver: Driver?) {
+                        stopProgressBar()
+                        initScreenFields(driver!!)
+                    }
+
+                    override fun onError(message: String) {
+                        stopProgressBar()
+                        showValidation(message)
+                    }
+
+                    override fun onFailure(t: Throwable?) {
+                        stopProgressBar()
+                        showError(t?.message!!)
+                    }
+
+                })
+    }
+/*
+    private fun getDriver(){
+        initProgressBar()
+        //var car = intent.getParcelableExtra<Entity>(VariablesUtil.MY_CAR)
+        //intent.getSerializableExtr
+        val bundle = intent.getBundleExtra("bundle")
+        var car  = bundle.getParcelable<Car>(VariablesUtil.MY_CAR) as Car
+        initScreenFields(car.driver!!)
+        stopProgressBar()
+    }
+    */
 }
