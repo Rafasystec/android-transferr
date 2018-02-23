@@ -40,21 +40,12 @@ object UserService :SuperWebService(){
     }
 
 
-    fun changePassword(idUser:Long, actualPassword:String, newPassword:String ):ResponseOK?{
-        if(isConnected()){
-            return service.changePassword(idUser,actualPassword,newPassword).execute().body()
-        }
-        return null
+    fun changePassword(idUser:Long, actualPassword:String, newPassword:String,responseInterface: OnResponseInterface<ResponseOK> ){
+        return service.changePassword(idUser,actualPassword,newPassword).enqueue(HelperCallBackWebService(responseInterface))
     }
 
-    fun recoverPassword(email:String):ResponseOK?{
-        if(isConnected()){
-            return service.recoverPassword(email).execute().body()
-        }
-        return null
+    fun recoverPassword(email:String,responseInterface: OnResponseInterface<ResponseOK>){
+        return service.recoverPassword(email).enqueue(HelperCallBackWebService(responseInterface))
     }
 
-    fun getService(): IUserService{
-        return service
-    }
 }

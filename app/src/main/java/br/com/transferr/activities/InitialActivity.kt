@@ -94,14 +94,6 @@ class InitialActivity : SuperClassActivity(), GoogleApiClient.ConnectionCallback
         mGoogleApiClient.connect()
     }
 
-    private fun callWebService(coordinates: Coordinates) {
-        doAsync {
-            val response = CoordinateService.save(coordinates)
-            uiThread {
-
-            }
-        }
-    }
 
     override fun onConnected(p0: Bundle?) {
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -117,18 +109,5 @@ class InitialActivity : SuperClassActivity(), GoogleApiClient.ConnectionCallback
                     }
                 })
     }
-/*
-    private fun startLocationUpdates() {
-        mLocationRequest = LocationRequest.create()
-                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
-                .setInterval(UPDATE_INTERVAL)
-                .setFastestInterval(FASTEST_INTERVAL);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return
-        }
-        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,
-                mLocationRequest, this)
 
-    }
-    */
 }

@@ -23,11 +23,8 @@ object DriverService :SuperWebService(){
         return service.getDriver(id).enqueue(HelperCallBackWebService(responseInterface))
     }
 
-    fun savePhoto(anexoPhoto: AnexoPhoto): ResponseOK?{
-        if(isConnected()) {
-            return service.savePhoto(anexoPhoto).execute().body()
-        }
-        return null
+    fun savePhoto(anexoPhoto: AnexoPhoto,responseInterface: OnResponseInterface<ResponseOK>){
+        service.savePhoto(anexoPhoto).enqueue(HelperCallBackWebService(responseInterface))
     }
 
     fun getDriverByCar(id:Long,responseInterface: OnResponseInterface<Driver>){

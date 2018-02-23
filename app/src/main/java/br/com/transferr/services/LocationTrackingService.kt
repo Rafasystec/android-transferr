@@ -13,10 +13,13 @@ import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.util.Log
 import android.widget.Toast
+import br.com.transferr.extensions.log
+import br.com.transferr.extensions.toJson
 import br.com.transferr.model.Car
 import br.com.transferr.model.Coordinates
 import br.com.transferr.model.Driver
 import br.com.transferr.model.enums.EnumStatus
+import br.com.transferr.model.responses.OnResponseInterface
 import br.com.transferr.util.MyLocationLister
 import br.com.transferr.util.NetworkUtil
 import br.com.transferr.webservices.CoordinateService
@@ -67,8 +70,6 @@ class LocationTrackingService : Service(),com.google.android.gms.location.Locati
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
-        //toast("starting service")
-        //runs=true
         return START_STICKY
     }
 
@@ -82,15 +83,25 @@ class LocationTrackingService : Service(),com.google.android.gms.location.Locati
     private fun callWebService(location: Location?) {
         var car:Car? =null
         var coordinates = Coordinates()
-        coordinates.id = 0
+        coordinates.id = 1
         coordinates.car         = car
         coordinates.latitude    = location?.latitude
         coordinates.longitude   = location?.longitude
-        doAsync {
-            if(isConnected()) {
-                CoordinateService.save(coordinates)
-            }
-        }
+        CoordinateService.save(coordinates,
+                object : OnResponseInterface<Coordinates>{
+                    override fun onSuccess(body: Coordinates?) {
+                        log(body?.toJson()!!)
+                    }
+
+                    override fun onError(message: String) {
+                        log("Error returned from server: $message")
+                    }
+
+                    override fun onFailure(t: Throwable?) {
+                        log("Falha ${t?.message}")
+                    }
+
+                })
     }
 
 
@@ -138,6 +149,16 @@ class LocationTrackingService : Service(),com.google.android.gms.location.Locati
 
     private fun isConnected():Boolean{
         return NetworkUtil.isNetworkAvailable(this)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        toast("On destroy")
+        if(mGoogleApiClient != null){
+            if(mGoogleApiClient.isConnected){
+                mGoogleApiClient.disconnect()
+            }
+        }
     }
 
 }

@@ -12,6 +12,7 @@ import br.com.transferr.model.AnexoPhoto
 import br.com.transferr.model.Driver
 import br.com.transferr.model.responses.OnResponseInterface
 import br.com.transferr.model.responses.ResponseOK
+import br.com.transferr.util.FileUtil
 import br.com.transferr.util.ImageUtil
 import br.com.transferr.util.Prefes
 import br.com.transferr.webservices.DriverService
@@ -25,6 +26,7 @@ import java.io.File
 class DriverInforActivity : SuperClassActivity() {
     private val camera      = HelperCamera()
     private val photoName   = "photoProfile.jpg"
+    private var driver:Driver?=null
     var file:File? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,6 +37,7 @@ class DriverInforActivity : SuperClassActivity() {
     }
 
     private fun initScreenFields(driver:Driver){
+        this.driver                 = driver
         lblDriverNameValue.text     = driver.name
         lblCfpValue.text            = driver.countryRegister
         lblDtNascimentoValue.text   = driver.birthDate.toString()
@@ -89,6 +92,7 @@ class DriverInforActivity : SuperClassActivity() {
 
     private fun btnAlterPassClick(){
         if(validate()){
+            initProgressBar()
             callServiceToChangeThePassword()
         }
     }
@@ -120,46 +124,58 @@ class DriverInforActivity : SuperClassActivity() {
     }
 
     private fun callServiceToChangeThePassword(){
-        doAsync {
-            var message = ""
-            var response:ResponseOK? = null
-            try {
-                response = UserService.changePassword(Prefes.prefsLogin,
-                        txtOldPassword.text.toString(),
-                        txtNewPassword.text.toString())
-            }catch (e:Exception){
-                message = e.message!!
-                toast("Erro ao tentar alterar a senha ${e.message}")
-            }
-            uiThread {
-                if(response != null){
-                    toast("Senha alterada com sucesso!")
+        var oldPassword = txtOldPassword.text.toString()
+        var newPassword = txtNewPassword.text.toString()
+        UserService.changePassword(Prefes.prefsLogin,oldPassword,newPassword,
+                object : OnResponseInterface<ResponseOK>{
+                    override fun onSuccess(body: ResponseOK?) {
+                        stopProgressBar()
+                        toast("Senha alterada com sucesso!")
+                    }
+
+                    override fun onError(message: String) {
+                        stopProgressBar()
+                        showValidation(message)
+                    }
+
+                    override fun onFailure(t: Throwable?) {
+                        stopProgressBar()
+                        showError(t?.message!!)
+                    }
+
                 }
-            }
-        }
+        )
     }
 
-   // val dialog = ProgressDialog.show(this,"Salvando","Salvando imagem. Aguarde.",false,true)
+
     private fun postImageProfile(){
-        var anexoPhoto = AnexoPhoto()
-        doAsync {
-            var response:ResponseOK? = null
-            var msgError:String? = ""
-            try {
-                response = DriverService.savePhoto(anexoPhoto)
-            }catch (e:Exception){
-                msgError = e.message
-            }
-            uiThread {
-                if(response != null) {
-                    toast("Imagem salva")
-                }else{
-                    toast("Erro ao tentar salvar a imagem $msgError")
-                }
-                //dialog.dismiss()
-                finish()
-            }
+        var anexo = AnexoPhoto()
+        if(this.driver == null){
+            stopProgressBar()
+            toast("Nenhum motorista para relacionar com a foto!")
+            return
         }
+        anexo.identity      = this.driver!!.id.toString()
+        anexo.anexoBase64   = FileUtil.toBase64(camera.file!!)
+        DriverService.savePhoto(anexo!!,
+            object : OnResponseInterface<ResponseOK>{
+                override fun onSuccess(body: ResponseOK?) {
+                    stopProgressBar()
+                    toast("Foto salva com sucesso!")
+                }
+
+                override fun onError(message: String) {
+                    stopProgressBar()
+                    showValidation(message)
+                }
+
+                override fun onFailure(t: Throwable?) {
+                    stopProgressBar()
+                    showError(t?.message!!)
+                }
+
+            }
+        )
 
     }
 
@@ -197,15 +213,5 @@ class DriverInforActivity : SuperClassActivity() {
 
                 })
     }
-/*
-    private fun getDriver(){
-        initProgressBar()
-        //var car = intent.getParcelableExtra<Entity>(VariablesUtil.MY_CAR)
-        //intent.getSerializableExtr
-        val bundle = intent.getBundleExtra("bundle")
-        var car  = bundle.getParcelable<Car>(VariablesUtil.MY_CAR) as Car
-        initScreenFields(car.driver!!)
-        stopProgressBar()
-    }
-    */
+
 }

@@ -4,19 +4,16 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import br.com.transferr.R
+import br.com.transferr.extensions.showError
+import br.com.transferr.extensions.showValidation
 import br.com.transferr.extensions.toast
-import br.com.transferr.helpers.HelperCallBackWebService
 import br.com.transferr.model.Credentials
 import br.com.transferr.model.responses.OnResponseInterface
 import br.com.transferr.model.responses.ResponseLogin
 import br.com.transferr.model.responses.ResponseOK
 import br.com.transferr.util.Prefes
-import br.com.transferr.util.RestUtil
 import br.com.transferr.webservices.UserService
 import kotlinx.android.synthetic.main.activity_login.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import kotlin.system.exitProcess
 
 class LoginActivity : SuperClassActivity() {
@@ -53,6 +50,7 @@ class LoginActivity : SuperClassActivity() {
             UserService.doLogin(getCredentialsFromForm(),
                 object : OnResponseInterface<ResponseLogin>{
                     override fun onSuccess(body: ResponseLogin?) {
+                        stopProgressBar()
                         executeLogin(body?.user?.id!!)
                     }
                     override fun onError(message: String) {
@@ -101,29 +99,40 @@ class LoginActivity : SuperClassActivity() {
         finish()
     }
 
-    private fun callServiceToRecoverPassword(){
+    private fun validateRecoverPasswor():Boolean{
         var email = txtLogin.text.toString().trim()
-        if(email.isEmpty()){
+        if(email.isEmpty()) {
             toast("Por favor informe o Usuário, ele é o seu e-mail.")
-        }else {
-
-            UserService.getService().recoverPassword(email).enqueue(
-                    object : Callback<ResponseOK> {
-                        override fun onFailure(call: Call<ResponseOK>?, t: Throwable?) {
-                            toast("Erro grave ${t?.message}")
-                        }
-
-                        override fun onResponse(call: Call<ResponseOK>?, response: Response<ResponseOK>?) {
-                           if(response?.isSuccessful!!){
-                               toast("Um e-mail com a sua senha foi enviado para $email")
-                           }else if(response != null){
-                                toast(RestUtil<ResponseOK>().getErroMessage(response))
-                           }
-                        }
-
-                    }
-            )
+            return false
         }
+        return true
+    }
+
+    private fun callServiceToRecoverPassword(){
+       if(validateRecoverPasswor()){
+           initProgressBar()
+           var email = txtLogin.text.toString().trim()
+           UserService.recoverPassword(email,
+               object : OnResponseInterface<ResponseOK>{
+                   override fun onSuccess(body: ResponseOK?) {
+                       stopProgressBar()
+                       toast("Um e-mail foi enviado para $email")
+                   }
+
+                   override fun onError(message: String) {
+                       stopProgressBar()
+                       showValidation(message)
+                   }
+
+                   override fun onFailure(t: Throwable?) {
+                       stopProgressBar()
+                       showError(t?.message!!)
+                   }
+
+               }
+           )
+       }
+
     }
 
     private fun initProgressBar(){

@@ -44,7 +44,11 @@ fun AppCompatActivity.addFragment(@IdRes layoutId:Int, fragment: Fragment){
 }
 
 fun Activity.showError(message: CharSequence) {
-    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+    var messageError = "Erro desconhecido."
+    if(message == null){
+        messageError = message
+    }
+    Toast.makeText(this, messageError, Toast.LENGTH_SHORT).show()
 }
 
 fun Activity.showValidation(message: CharSequence) {
