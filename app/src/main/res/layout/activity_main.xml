@@ -156,7 +156,7 @@
      android:layout_marginTop="16dp"
      android:background="@drawable/button_shape"
      />
-
+<!--
     <include layout="@layout/action_map" />
-
+-->
 </LinearLayout>

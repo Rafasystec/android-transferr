@@ -7,11 +7,27 @@
         android:icon="@drawable/ic_exit_to_app_white_24dp"
         android:title="@string/exit"
         android:tooltipText="@string/exit"
-        app:showAsAction="ifRoom|withText">
+        android:contentDescription="Sair Agora"
+        android:iconTint="@color/primary"
+        android:iconTintMode="multiply"
+        app:showAsAction="withText">
 
-        <TextView android:text="Sair">
+        <TextView
+            android:text="Sair"
+            android:textSize="15dp"
+            >
 
         </TextView>
+    </item>
+    <item
+        android:id="@+id/action_mapa"
+        android:icon="@drawable/ic_exit_to_app_white_24dp"
+        android:title="@string/seeMap"
+        android:tooltipText="@string/seeMap"
+        android:contentDescription="Sair Agora"
+        android:iconTint="@color/primary"
+        android:iconTintMode="multiply"
+        app:showAsAction="withText">
     </item>
 
 

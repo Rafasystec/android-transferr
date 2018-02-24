@@ -27,7 +27,6 @@ class LoginActivity : SuperClassActivity() {
         btnRecoverPass.setOnClickListener{
             callServiceToRecoverPassword()
         }
-        toast("onCreate login")
         checkUserLogin()
     }
 
@@ -91,13 +90,14 @@ class LoginActivity : SuperClassActivity() {
         Prefes.prefsLogin = idUser
         callMainActivity()
     }
-
+/*
     override fun onBackPressed() {
         super.onBackPressed()
         toast("onBackPressed login")
         exitProcess(0)
         finish()
     }
+    */
 
     private fun validateRecoverPasswor():Boolean{
         var email = txtLogin.text.toString().trim()

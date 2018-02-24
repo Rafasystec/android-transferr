@@ -42,20 +42,15 @@ class MainActivity : SuperClassActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setupToolbar(R.id.toolbar,"Início")
+        checkLogin()
         initView()
     }
     private fun initView(){
         btnFrmDriver.setOnClickListener { callFormDriver() }
         swtOnline.setOnClickListener { stopInitLocation() }
-        addActionToFloatingButtonMap()
-        val isLoged = checkUserLogin()
+        //addActionToFloatingButtonMap()
         checkNetwork()
-        if(isLoged) {
-            stopInitLocation()
-            getCarFromWebService()
-        }else{
-            startActivity(Intent(context,LoginActivity::class.java))
-        }
+
     }
 
     private fun callFormDriver(){
@@ -198,6 +193,21 @@ class MainActivity : SuperClassActivity() {
         this@MainActivity.runOnUiThread({
             progressBar.visibility = View.GONE
         })
+    }
+
+    private fun checkLogin(){
+        val isLoged = checkUserLogin()
+        if(isLoged) {
+            stopInitLocation()
+            getCarFromWebService()
+        }else{
+           callLoginActivity()
+        }
+    }
+
+    private fun callLoginActivity(){
+        startActivity(Intent(context,LoginActivity::class.java))
+        finish()
     }
 
 }

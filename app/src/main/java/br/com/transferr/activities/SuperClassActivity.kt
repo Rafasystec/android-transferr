@@ -43,17 +43,15 @@ open class SuperClassActivity : AppCompatActivity(){
             // User chose the "Settings" item, show the app settings UI...
             logout()
             callLoginActivity()
-            //finishAndRemoveTask()
-            //System.exit(0)
             true
         }
-/*
-        R.id.action_favorite -> {
+
+        R.id.action_mapa -> {
             // User chose the "Favorite" action, mark the current item
-            // as a favorite...
+            startMap()
             true
         }
-*/
+
         else -> {
             // If we got here, the user's action was not recognized.
             // Invoke the superclass to handle it.
@@ -69,7 +67,9 @@ open class SuperClassActivity : AppCompatActivity(){
         startActivity(Intent(context,LoginActivity::class.java))
     }
 
-
+    private fun startMap(){
+        startActivity(Intent(context,InitialActivity::class.java))
+    }
 
 
 }
