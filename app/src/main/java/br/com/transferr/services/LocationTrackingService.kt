@@ -6,7 +6,6 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.location.Geocoder
 import android.location.Location
 import android.location.LocationManager
 import android.os.Bundle
@@ -15,25 +14,16 @@ import android.util.Log
 import android.widget.Toast
 import br.com.transferr.extensions.log
 import br.com.transferr.extensions.toJson
-import br.com.transferr.model.Car
-import br.com.transferr.model.Coordinates
-import br.com.transferr.model.Driver
-import br.com.transferr.model.enums.EnumStatus
 import br.com.transferr.model.responses.OnResponseInterface
-import br.com.transferr.util.MyLocationLister
+import br.com.transferr.model.responses.RequestCoordinatesUpdate
 import br.com.transferr.util.NetworkUtil
+import br.com.transferr.util.Prefes
 import br.com.transferr.webservices.CoordinateService
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.api.GoogleApiClient
-import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.tasks.OnSuccessListener
-import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
-import org.jetbrains.anko.uiThread
-import java.io.IOException
-import java.util.*
 
 class LocationTrackingService : Service(),com.google.android.gms.location.LocationListener,GoogleApiClient.ConnectionCallbacks,GoogleApiClient.OnConnectionFailedListener {
     override fun onConnectionFailed(connectionResult: ConnectionResult) {
@@ -81,26 +71,29 @@ class LocationTrackingService : Service(),com.google.android.gms.location.Locati
     }
 
     private fun callWebService(location: Location?) {
-        var car:Car? =null
-        var coordinates = Coordinates()
-        coordinates.id = 1
-        coordinates.car         = car
-        coordinates.latitude    = location?.latitude
-        coordinates.longitude   = location?.longitude
-        CoordinateService.save(coordinates,
-                object : OnResponseInterface<Coordinates>{
-                    override fun onSuccess(body: Coordinates?) {
-                        log(body?.toJson()!!)
+
+
+        var requestUpdate = RequestCoordinatesUpdate()
+        requestUpdate.longitude = location?.longitude
+        requestUpdate.latitude  = location?.latitude
+        requestUpdate.idCar     = Prefes.prefsCar
+        CoordinateService.updateMyLocation(requestUpdate,
+                object : OnResponseInterface<RequestCoordinatesUpdate>{
+                    override fun onSuccess(body: RequestCoordinatesUpdate?) {
+                        log("OK! JSON returned --> ${body?.toJson()}")
                     }
 
                     override fun onError(message: String) {
-                        log("Error returned from server: $message")
+                        log("Error : $message")
                     }
 
                     override fun onFailure(t: Throwable?) {
-                        log("Falha ${t?.message}")
+                        if(t != null) {
+                            log("Failure to update my location: ${t.message}")
+                        }else{
+                            log("Failure to update my location")
+                        }
                     }
-
                 })
     }
 

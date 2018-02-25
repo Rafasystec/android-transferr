@@ -55,10 +55,6 @@ class MainActivity : SuperClassActivity() {
 
     private fun callFormDriver(){
         val intentInit = Intent(context,DriverInforActivity::class.java)
-        var bundle = Bundle()
-        bundle.putParcelable(VariablesUtil.MY_CAR,car)
-        intentInit.putExtra("bundle",bundle)
-        //intentInit.putExtra(VariablesUtil.MY_CAR,car)
         startActivity(intentInit)
     }
 
@@ -67,7 +63,7 @@ class MainActivity : SuperClassActivity() {
             startService()
             swtOnline.setTextColor(Color.BLUE)
         }else{
-            stopService()
+            stopServiceIntent()
             swtOnline.setTextColor(Color.BLACK)
         }
     }
@@ -76,14 +72,20 @@ class MainActivity : SuperClassActivity() {
         if(isLocationPermissionGranted()) {
             if(!isLocationEnabled()) {
                 showAlert()
+            }else{
+                startServiceIntent()
             }
-            startService(Intent(this, LocationTrackingService::class.java))
+
         }
         startService(Intent(this, LocationTrackingService::class.java))
     }
 
-    private fun stopService(){
+    private fun stopServiceIntent(){
         stopService(Intent(this,LocationTrackingService::class.java))
+    }
+
+    private fun startServiceIntent(){
+        startService(Intent(this, LocationTrackingService::class.java))
     }
 
     private fun isLocationEnabled(): Boolean {
@@ -99,11 +101,11 @@ class MainActivity : SuperClassActivity() {
                     val myIntent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
                     startActivity(myIntent)
                     swtOnline.isChecked = true
-                    stopInitLocation()
+                    startServiceIntent()
                 })
                 .setNegativeButton("Cancel", DialogInterface.OnClickListener { paramDialogInterface, paramInt ->
                    swtOnline.isChecked = false
-                   stopService()
+                   stopServiceIntent()
                 })
         dialog.show()
     }
