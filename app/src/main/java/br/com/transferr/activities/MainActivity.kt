@@ -8,31 +8,27 @@ import android.content.pm.PackageManager
 import android.graphics.Color
 import android.location.LocationManager
 import android.os.Bundle
+import android.os.PersistableBundle
 import android.provider.Settings
 import android.support.v4.app.ActivityCompat
 import android.support.v7.app.AlertDialog
 import android.view.View
 import br.com.transferr.R
+import br.com.transferr.extensions.log
 import br.com.transferr.extensions.setupToolbar
-import br.com.transferr.extensions.toast
+import br.com.transferr.extensions.showError
+import br.com.transferr.extensions.showValidation
 import br.com.transferr.model.Car
-import br.com.transferr.model.Driver
-import br.com.transferr.model.enums.EnumStatus
 import br.com.transferr.model.responses.OnResponseInterface
-import br.com.transferr.model.responses.ResponseLogin
+import br.com.transferr.model.responses.RequestCoordinatesUpdate
+import br.com.transferr.model.responses.ResponseOK
 import br.com.transferr.services.LocationTrackingService
 import br.com.transferr.util.NetworkUtil
 import br.com.transferr.util.Prefes
 import br.com.transferr.util.VariablesUtil
 import br.com.transferr.webservices.CarService
-import kotlinx.android.synthetic.main.action_map.*
 import kotlinx.android.synthetic.main.activity_main.*
-import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.toast
-import org.jetbrains.anko.uiThread
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class MainActivity : SuperClassActivity() {
 
@@ -42,13 +38,13 @@ class MainActivity : SuperClassActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setupToolbar(R.id.toolbar,"Início")
+        getBundleValues(savedInstanceState)
         checkLogin()
         initView()
     }
     private fun initView(){
         btnFrmDriver.setOnClickListener { callFormDriver() }
         swtOnline.setOnClickListener { stopInitLocation() }
-        //addActionToFloatingButtonMap()
         checkNetwork()
 
     }
@@ -62,8 +58,10 @@ class MainActivity : SuperClassActivity() {
         if(swtOnline.isChecked){
             startService()
             swtOnline.setTextColor(Color.BLUE)
+            onlineOffline(true)
         }else{
             stopServiceIntent()
+            onlineOffline(false)
             swtOnline.setTextColor(Color.BLACK)
         }
     }
@@ -118,6 +116,11 @@ class MainActivity : SuperClassActivity() {
         return true
     }
 
+    override fun onSaveInstanceState(outState: Bundle?, outPersistentState: PersistableBundle?) {
+        super.onSaveInstanceState(outState, outPersistentState)
+        outState?.putBoolean(VariablesUtil.ONLINE, swtOnline.isChecked)
+    }
+
     private fun initScreenFields(car:Car){
         this.car = car
         Prefes.prefsCar = car.id!!
@@ -134,6 +137,7 @@ class MainActivity : SuperClassActivity() {
                     override fun onSuccess(car: Car?) {
                         stopProgressBar()
                         initScreenFields(car!!)
+                        Prefes.prefsCarJSON = car
                     }
 
                     override fun onError(message: String) {
@@ -153,17 +157,10 @@ class MainActivity : SuperClassActivity() {
 
     private fun checkUserLogin():Boolean{
         val id = Prefes.prefsLogin
-        val idZero:Long = 0
         if(id == null || id <= 0){
             return false
         }
         return true
-    }
-
-    private fun addActionToFloatingButtonMap(){
-        actionMap.setOnClickListener {
-            startMap()
-        }
     }
 
     private fun startMap(){
@@ -212,4 +209,51 @@ class MainActivity : SuperClassActivity() {
         finish()
     }
 
+    private fun onlineOffline(online:Boolean){
+        var request = RequestCoordinatesUpdate()
+        request.idCar = Prefes.prefsCar
+        if(online) {
+            //Pegar as coordenadas reais
+            CarService.online(request,
+                    object : OnResponseInterface<ResponseOK>{
+                        override fun onSuccess(body: ResponseOK?) {
+                            log("OK")
+                        }
+
+                        override fun onError(message: String) {
+                            showValidation(message)
+                        }
+
+                        override fun onFailure(t: Throwable?) {
+                            showError(t?.message!!)
+                        }
+
+                    }
+            )
+        }else{
+            CarService.offline(request,
+                    object : OnResponseInterface<ResponseOK>{
+                        override fun onSuccess(body: ResponseOK?) {
+                            log("OK- Estou offline")
+                        }
+
+                        override fun onError(message: String) {
+                            showValidation(message)
+                        }
+
+                        override fun onFailure(t: Throwable?) {
+                            showError(t)
+                        }
+
+                    }
+            )
+        }
+
+    }
+    private fun getBundleValues(savedInstanceState: Bundle?){
+        if(savedInstanceState != null){
+            swtOnline.isChecked = savedInstanceState.getBoolean(VariablesUtil.ONLINE)
+        }
+    }
+    
 }

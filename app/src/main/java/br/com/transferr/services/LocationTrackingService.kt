@@ -44,8 +44,8 @@ class LocationTrackingService : Service(),com.google.android.gms.location.Locati
     }
 
     override fun onLocationChanged(location: Location?) {
-        var msg = "Updated Location: LatLon " + location?.latitude + " - " + location?.longitude
-        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
+        //var msg = "Updated Location: LatLon " + location?.latitude + " - " + location?.longitude
+        //Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
         callWebService(location)
     }
 

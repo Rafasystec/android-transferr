@@ -54,3 +54,11 @@ fun Activity.showError(message: CharSequence) {
 fun Activity.showValidation(message: CharSequence) {
     Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
 }
+
+fun Activity.showError(throwable: Throwable?) {
+    var message = "Erro desconecido"
+    if(throwable?.message != null){
+        message = throwable.message!!
+    }
+    Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+}

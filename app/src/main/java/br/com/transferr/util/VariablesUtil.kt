@@ -6,4 +6,5 @@ package br.com.transferr.util
 object VariablesUtil {
 
     val MY_CAR = "MY_CAR"
+    val ONLINE = "IS_ONLINE"
 }
