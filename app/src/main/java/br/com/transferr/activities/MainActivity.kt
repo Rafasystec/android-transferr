@@ -19,6 +19,7 @@ import br.com.transferr.extensions.setupToolbar
 import br.com.transferr.extensions.showError
 import br.com.transferr.extensions.showValidation
 import br.com.transferr.model.Car
+import br.com.transferr.model.enums.EnumStatus
 import br.com.transferr.model.responses.OnResponseInterface
 import br.com.transferr.model.responses.RequestCoordinatesUpdate
 import br.com.transferr.model.responses.ResponseOK
@@ -128,6 +129,7 @@ class MainActivity : SuperClassActivity() {
         lblDriverValue.text= car.driver?.name
         lblModelValue.text = car.model
         lblPlacaValue.text = car.carIdentity
+        swtOnline.isChecked = car.status!=EnumStatus.OFFLINE
     }
 
     private fun getCarFromWebService(){
@@ -197,8 +199,13 @@ class MainActivity : SuperClassActivity() {
     private fun checkLogin(){
         val isLoged = checkUserLogin()
         if(isLoged) {
-            stopInitLocation()
-            getCarFromWebService()
+            if(isConnected()) {
+                getCarFromWebService()
+                stopInitLocation()
+            }else{
+                showError("Sem conexão com a Internet.")
+            }
+
         }else{
            callLoginActivity()
         }
@@ -217,14 +224,17 @@ class MainActivity : SuperClassActivity() {
             CarService.online(request,
                     object : OnResponseInterface<ResponseOK>{
                         override fun onSuccess(body: ResponseOK?) {
+                            stopProgressBar()
                             log("OK")
                         }
 
                         override fun onError(message: String) {
+                            stopProgressBar()
                             showValidation(message)
                         }
 
                         override fun onFailure(t: Throwable?) {
+                            stopProgressBar()
                             showError(t?.message!!)
                         }
 
@@ -234,14 +244,17 @@ class MainActivity : SuperClassActivity() {
             CarService.offline(request,
                     object : OnResponseInterface<ResponseOK>{
                         override fun onSuccess(body: ResponseOK?) {
+                            stopProgressBar()
                             log("OK- Estou offline")
                         }
 
                         override fun onError(message: String) {
+                            stopProgressBar()
                             showValidation(message)
                         }
 
                         override fun onFailure(t: Throwable?) {
+                            stopProgressBar()
                             showError(t)
                         }
 
@@ -255,5 +268,5 @@ class MainActivity : SuperClassActivity() {
             swtOnline.isChecked = savedInstanceState.getBoolean(VariablesUtil.ONLINE)
         }
     }
-    
+
 }
