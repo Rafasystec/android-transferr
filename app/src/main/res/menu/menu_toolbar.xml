@@ -29,6 +29,16 @@
         android:iconTintMode="multiply"
         app:showAsAction="withText">
     </item>
+    <item
+        android:id="@+id/action_plain_tour"
+        android:icon="@drawable/ic_exit_to_app_white_24dp"
+        android:title="@string/plainTour"
+        android:tooltipText="@string/plainTour"
+        android:contentDescription="Planejar passeio"
+        android:iconTint="@color/primary"
+        android:iconTintMode="multiply"
+        app:showAsAction="withText">
+    </item>
 
 
 </menu>

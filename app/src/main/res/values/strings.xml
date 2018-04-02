@@ -8,4 +8,5 @@
     <string name="name">Nome:</string>
     <string name="exit">Sair</string>
     <string name="seeMap">Mapa</string>
+    <string name="plainTour">Passeios</string>
 </resources>

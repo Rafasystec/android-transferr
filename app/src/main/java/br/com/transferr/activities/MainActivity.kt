@@ -165,9 +165,9 @@ class MainActivity : SuperClassActivity() {
         return true
     }
 
-    private fun startMap(){
-        startActivity(Intent(context,InitialActivity::class.java))
-    }
+    //private fun startMap(){
+    //    startActivity(Intent(context,InitialActivity::class.java))
+    //}
 
     private fun checkNetwork(){
         if(!isConnected()){

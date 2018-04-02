@@ -52,6 +52,12 @@ open class SuperClassActivity : AppCompatActivity(){
             true
         }
 
+        R.id.action_plain_tour -> {
+            // User chose the "Favorite" action, mark the current item
+            startPlainTour()
+            true
+        }
+
         else -> {
             // If we got here, the user's action was not recognized.
             // Invoke the superclass to handle it.
@@ -69,6 +75,10 @@ open class SuperClassActivity : AppCompatActivity(){
 
     private fun startMap(){
         startActivity(Intent(context,InitialActivity::class.java))
+    }
+
+    private fun startPlainTour(){
+        startActivity(Intent(context,PlainTourActivity::class.java))
     }
 
 
