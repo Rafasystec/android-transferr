@@ -9,4 +9,7 @@
     <string name="exit">Sair</string>
     <string name="seeMap">Mapa</string>
     <string name="plainTour">Passeios</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

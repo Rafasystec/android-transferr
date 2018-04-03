@@ -92,7 +92,8 @@
                 android:resource="@xml/provider_paths" />
         </provider>
 
-        <activity android:name=".activities.PlainTourActivity"></activity>
+        <activity android:name=".activities.PlainTourActivity"
+            android:parentActivityName=".activities.MainActivity"></activity>
     </application>
 
 </manifest>

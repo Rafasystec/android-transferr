@@ -8,15 +8,18 @@ import android.view.View
 import android.view.ViewGroup
 import br.com.transferr.R
 import br.com.transferr.model.PlainTour
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.rc_view_tours.view.*
 
 /**
  * Created by root on 02/04/18.
  */
 class TourAdapter(private val tours:List<PlainTour>,private val context: Context) : Adapter<TourAdapter.ViewHolder>(){
+
+
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(context).inflate(R.layout.rc_view_tours, parent, false)
-        return ViewHolder(view)
+        return ViewHolder(view,context)
     }
 
     override fun getItemCount(): Int {
@@ -24,17 +27,21 @@ class TourAdapter(private val tours:List<PlainTour>,private val context: Context
     }
 
     override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
-        val tour = tours[position]
         holder?.let {
-            holder.title.text = tour.title
-            holder.description.text = tour.description
+            it.bindView(tours[position])
         }
 
     }
 
-    class ViewHolder(itemView:View) : RecyclerView.ViewHolder(itemView){
-        val title = itemView.note_item_title
-        val description = itemView.note_item_description
+    class ViewHolder(itemView:View,val context: Context) : RecyclerView.ViewHolder(itemView){
+        fun bindView(tour: PlainTour) {
+            val title       = itemView.note_item_title
+            val description = itemView.note_item_description
+            val seats       = itemView.seats
+            title.text          = tour.tourOption?.name
+            description.text    = tour.tourOption?.description
+            seats.text          = "Vagas: " + tour.seatsRemaining
+        }
     }
 }
 

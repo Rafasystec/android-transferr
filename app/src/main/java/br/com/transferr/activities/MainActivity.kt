@@ -130,6 +130,7 @@ class MainActivity : SuperClassActivity() {
         lblModelValue.text = car.model
         lblPlacaValue.text = car.carIdentity
         swtOnline.isChecked = car.status!=EnumStatus.OFFLINE
+        Prefes.prefsDriver = car.driver?.id!!
     }
 
     private fun getCarFromWebService(){
