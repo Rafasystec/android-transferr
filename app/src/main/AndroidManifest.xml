@@ -29,7 +29,7 @@
         <activity
             android:name=".activities.MainActivity"
             android:excludeFromRecents="false"
-            android:noHistory="true">
+            android:noHistory="false">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -92,8 +92,13 @@
                 android:resource="@xml/provider_paths" />
         </provider>
 
-        <activity android:name=".activities.PlainTourActivity"
-            android:parentActivityName=".activities.MainActivity"></activity>
+        <activity
+            android:name=".activities.PlainTourActivity"
+            android:parentActivityName=".activities.MainActivity" />
+        <activity
+            android:name=".activities.FrmPlainTourActivity"
+            android:parentActivityName=".activities.PlainTourActivity"/>
+
     </application>
 
 </manifest>

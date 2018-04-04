@@ -1,6 +1,7 @@
 package br.com.transferr.activities
 
 import android.app.AlertDialog
+import android.content.Intent
 import android.os.Bundle
 import android.support.v7.widget.GridLayoutManager
 import android.view.View
@@ -25,23 +26,9 @@ class PlainTourActivity : SuperClassActivity() {
         setContentView(R.layout.activity_plain_tour)
         setupToolbar(R.id.toolbar,"Passeios",true)
         createListTour(emptyList())
-        callWSToGetAllOpenDirverPlainTour()
-
+        callWSToGetAllOpenDriverPlainTour()
         fabAddPlainTour.setOnClickListener {
-            showEditDialog()
-            /*
-            val dialog = AlertDialog.Builder(this)
-            val dialogView = layoutInflater.inflate(R.layout.dialog_add_plaintour,null)
-            dialog.setView(dialogView)
-            dialog.setCancelable(true)
-            dialog.show()
-
-            dialogView.btnSavePlain.setOnClickListener {
-                toast(" Did you press OK")
-            }
-            dialogView.btnCancelPlain.setOnClickListener {
-            }
-            */
+           startFrmPlainTourActivity()
         }
 
     }
@@ -65,7 +52,7 @@ class PlainTourActivity : SuperClassActivity() {
         recyclerView.layoutManager  = layoutManager
     }
 
-    private fun callWSToGetAllOpenDirverPlainTour(){
+    private fun callWSToGetAllOpenDriverPlainTour(){
         initProgressBar()
         PlainTourService.getDriverPlains(Prefes.prefsDriver,
                 object : OnResponseInterface<List<PlainTour>> {
@@ -88,10 +75,8 @@ class PlainTourActivity : SuperClassActivity() {
          })
     }
 
-    private fun showEditDialog() {
-        val fm = supportFragmentManager
-        val editNameDialogFragment = DialogAddPlainFragment()
-        editNameDialogFragment.show(fm, "fragment_edit_name")
+    private fun startFrmPlainTourActivity(){
+        startActivity(Intent(context,FrmPlainTourActivity::class.java))
     }
 
 }

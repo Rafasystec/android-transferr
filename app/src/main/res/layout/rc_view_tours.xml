@@ -38,14 +38,15 @@
             tools:text="Assentos faltando"
             android:layout_below="@id/note_item_description"
             />
+
         <ImageView
             android:layout_width="25dp"
             android:layout_height="25dp"
-            android:layout_toRightOf="@id/seats"
-            android:src="@drawable/quantum_ic_closed_caption_grey600_36"
-            android:layout_marginBottom="5dp"
 
-            />
+            android:layout_alignParentEnd="true"
+            android:layout_below="@+id/note_item_description"
+            android:layout_marginEnd="58dp"
+            android:src="@drawable/quantum_ic_closed_caption_grey600_36" />
 
     </RelativeLayout>
 
