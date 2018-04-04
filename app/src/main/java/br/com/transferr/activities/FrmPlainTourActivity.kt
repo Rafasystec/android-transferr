@@ -13,6 +13,7 @@ import br.com.transferr.extensions.toast
 import br.com.transferr.model.Location
 import br.com.transferr.model.responses.ResponsePlainTour
 import kotlinx.android.synthetic.main.activity_frm_plain_tour.*
+import org.jetbrains.anko.alert
 
 class FrmPlainTourActivity : AppCompatActivity() {
 

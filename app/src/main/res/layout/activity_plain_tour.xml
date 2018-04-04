@@ -27,15 +27,15 @@
         android:layout_marginTop="60dp"/>
 
 
-
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/fabAddPlainTour"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|right"
-            android:layout_margin="16dp"
-            android:src="@drawable/ic_person_pin_selected"
-            app:layout_anchorGravity="bottom|right|end" />
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fabAddPlainTour"
+        android:layout_width="68dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:layout_margin="16dp"
+        android:src="@drawable/plus_circle"
+        app:layout_anchorGravity="bottom|right|end"
+        tools:layout_editor_absoluteX="300dp" />
 
 
 </android.support.design.widget.CoordinatorLayout>

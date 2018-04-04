@@ -18,6 +18,7 @@ import br.com.transferr.util.Prefes
 import br.com.transferr.webservices.PlainTourService
 import kotlinx.android.synthetic.main.activity_plain_tour.*
 import kotlinx.android.synthetic.main.dialog_add_plaintour.view.*
+import kotlinx.android.synthetic.main.rc_view_tours.*
 
 class PlainTourActivity : SuperClassActivity() {
 
@@ -77,6 +78,10 @@ class PlainTourActivity : SuperClassActivity() {
 
     private fun startFrmPlainTourActivity(){
         startActivity(Intent(context,FrmPlainTourActivity::class.java))
+    }
+
+    private fun alertConfirm(){
+
     }
 
 }
