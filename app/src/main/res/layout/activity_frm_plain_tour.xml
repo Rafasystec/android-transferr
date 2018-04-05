@@ -22,36 +22,44 @@
         android:padding="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="@dimen/form_text_size"
+        android:textSize="25sp"
         android:text="@string/tvLocation"
         android:paddingRight="10dp"
-        android:paddingLeft="10dp"/>
+        android:paddingLeft="10dp"
+        android:textColor="@color/primary_dark"
+        android:textStyle="bold"/>
 
     <Spinner
         android:id="@+id/spLocation"
         android:layout_width="320dp"
-        android:layout_height="wrap_content"
-        android:padding="15dp"
+        android:layout_height="45dp"
+        android:padding="10dp"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
-        android:background="#F0FFF0"/>
+        android:gravity="center"
+        style="@style/spinner_style"
+        />
     <TextView
         android:padding="10dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="@dimen/form_text_size"
+        android:textSize="25sp"
         android:text="@string/tvSeats"
         android:paddingRight="10dp"
-        android:paddingLeft="10dp"/>
+        android:paddingLeft="10dp"
+        android:textColor="@color/primary_dark"
+        android:textStyle="bold"/>
 
     <Spinner
         android:id="@+id/spSeats"
         android:layout_width="320dp"
-        android:layout_height="wrap_content"
-        android:padding="15dp"
+        android:layout_height="45dp"
+        android:padding="10dp"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
-        android:background="#F0FFF0"/>
+        style="@style/spinner_style"
+
+        />
 
     <LinearLayout
         android:layout_width="259dp"
@@ -66,15 +74,19 @@
             android:layout_width="161dp"
             android:layout_height="wrap_content"
             android:text="@string/tvEmptySeats"
-            android:textSize="@dimen/form_text_size" />
+            android:textSize="@dimen/form_text_size"
+            android:textColor="@color/violet"
+            android:textStyle="bold"/>
 
         <TextView
 
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="40dp"
+            android:paddingLeft="60dp"
             android:text="0"
-            android:textSize="@dimen/form_text_size" />
+            android:textSize="@dimen/form_text_size"
+            android:textColor="@color/violet"
+            android:textStyle="bold"/>
     </LinearLayout>
     <LinearLayout
         android:layout_width="wrap_content"
@@ -88,7 +100,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="@dimen/form_text_size"
-            android:text="@string/tvCarCapacite"/>
+            android:text="@string/tvCarCapacite"
+            android:textColor="@color/violet"
+            android:textStyle="bold"/>
         <TextView
 
             android:layout_width="match_parent"
@@ -96,7 +110,9 @@
             android:textSize="@dimen/form_text_size"
             android:paddingLeft="40dp"
             android:layout_marginRight="20dp"
-            android:text="0"/>
+            android:text="0"
+            android:textColor="@color/violet"
+            android:textStyle="bold"/>
     </LinearLayout>
     <Button
         android:id="@+id/btnSave"

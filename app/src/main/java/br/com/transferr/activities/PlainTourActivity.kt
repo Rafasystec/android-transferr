@@ -31,11 +31,17 @@ class PlainTourActivity : SuperClassActivity() {
         fabAddPlainTour.setOnClickListener {
            startFrmPlainTourActivity()
         }
+        fabRefeshPlainTour.setOnClickListener{
+            callWSToGetAllOpenDriverPlainTour()
+            rcviewTours.adapter.notifyDataSetChanged()
+            rcviewTours.refreshDrawableState()
+        }
 
     }
 
     private fun initProgressBar(){
         this@PlainTourActivity.runOnUiThread({
+            progressBar.bringToFront()
             progressBar.visibility = View.VISIBLE
         })
     }
@@ -80,8 +86,5 @@ class PlainTourActivity : SuperClassActivity() {
         startActivity(Intent(context,FrmPlainTourActivity::class.java))
     }
 
-    private fun alertConfirm(){
-
-    }
 
 }

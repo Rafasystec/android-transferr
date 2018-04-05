@@ -6,10 +6,7 @@ import br.com.transferr.model.PlainTour
 import br.com.transferr.model.responses.OnResponseInterface
 import br.com.transferr.model.responses.ResponsePlainTour
 import retrofit2.Call
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.Path
+import retrofit2.http.*
 
 /**
  * Created by idoctor on 03/04/2018.
@@ -29,15 +26,21 @@ object PlainTourService: SuperWebService() {
         service.save(responsePlainTour).enqueue(HelperCallBackWebService(responseInterface))
     }
 
+    fun increaseSeats(idPlainTour:Long,seats:Int,responseInterface: OnResponseInterface<PlainTour>){
+        service.increaseSeats(idPlainTour,seats).enqueue(HelperCallBackWebService(responseInterface))
+    }
+
 }
 
 interface IPlainTour{
     @POST(BASE_URL)
     fun save(@Body plainTour: PlainTour): Call<PlainTour>
-    @POST(BASE_URL)
+    @POST(BASE_URL+"/save")
     fun save(@Body responsePlainTour: ResponsePlainTour): Call<PlainTour>
     @GET(BASE_URL+"/{id}")
     fun get(@Path("id") id:Int): Call<PlainTour>
     @GET(BASE_URL+"/bydriver/{id}")
     fun getByDriver(@Path("id") id:Long): Call<List<PlainTour>>
+    @PUT(BASE_URL+"/increase/seats/{idPlainTour}/{seats}")
+    fun increaseSeats(@Path("idPlainTour") idPlainTour:Long,@Path("seats") seats:Int): Call<PlainTour>
 }

@@ -16,6 +16,7 @@ import br.com.transferr.model.PlainTour
 import br.com.transferr.model.TourOption
 import br.com.transferr.model.responses.OnResponseInterface
 import br.com.transferr.model.responses.ResponsePlainTour
+import br.com.transferr.util.Prefes
 import br.com.transferr.webservices.PlainTourService
 import br.com.transferr.webservices.TourOptionService
 import kotlinx.android.synthetic.main.activity_frm_plain_tour.*
@@ -32,6 +33,7 @@ class FrmPlainTourActivity : AppCompatActivity() {
         }
         getAllTourOption()
         initializeSpinnerSeats()
+        requestPlain.idDriver = Prefes.prefsDriver
     }
 
     private fun callWSToSaveNewPlainTour(){
@@ -89,7 +91,7 @@ class FrmPlainTourActivity : AppCompatActivity() {
 
     private fun initializeSpinnerSeats(){
         var range = arrayListOf(1,2,3,4,5,6,7,8,9,10)
-        spSeats.adapter = ArrayAdapter<Int>(this,R.layout.support_simple_spinner_dropdown_item,range)
+        spSeats.adapter = ArrayAdapter<Int>(this,R.layout.spinner_layout,range)
         spSeats.onItemSelectedListener = object : AdapterView.OnItemSelectedListener{
             override fun onNothingSelected(p0: AdapterView<*>?) {
                 toast("Informe quantidade inicial de passageiros")

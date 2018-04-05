@@ -1,7 +1,10 @@
 package br.com.transferr.adapters
 
+import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
+import android.graphics.Color
 import android.support.v7.widget.RecyclerView
 import android.support.v7.widget.RecyclerView.Adapter
 import android.view.LayoutInflater
@@ -37,20 +40,31 @@ class TourAdapter(private val tours:List<PlainTour>,private val context: Context
             it.itemView.setOnClickListener {
                 Toast.makeText(context,"Ao clicar será modificado",Toast.LENGTH_SHORT).show()
                 val dialog = AddPassengerDialog(context,activity,plainTour)
-                dialog.create()
+                var alertDialog = dialog.create()
+                alertDialog.setOnDismissListener{
+                    this.notifyDataSetChanged()
+                }
+                alertDialog.show()
             }
         }
 
     }
 
     class ViewHolder(itemView:View,val context: Context) : RecyclerView.ViewHolder(itemView){
+        @SuppressLint("ResourceAsColor")
         fun bindView(tour: PlainTour) {
             val titleView       = itemView.note_item_title
-            val description = itemView.note_item_description
-            val seats       = itemView.seats
-            titleView.text          = tour.tourOption?.name
+            val description     = itemView.note_item_description
+            val seats           = itemView.seats
+            titleView.text      = tour.tourOption?.name
             description.text    = tour.tourOption?.description
-            seats.text          = "Vagas: " + tour.seatsRemaining
+            if( tour.seatsRemaining == 0){
+                seats.text = "Esgotado"
+                seats.setTextColor(Color.RED)
+            }else {
+                seats.setTextColor(R.color.primary)
+                seats.text = "Vagas: " + tour.seatsRemaining
+            }
             itemView.imgTrash.setOnClickListener {
                 //Toast.makeText(context,"Excluir item ${tour.id}",Toast.LENGTH_LONG).show()
                 context.alert("Confirme exclusão"){

@@ -32,10 +32,23 @@
         android:layout_width="68dp"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|right"
-        android:layout_margin="16dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginRight="80dp"
         android:src="@drawable/plus_circle"
         app:layout_anchorGravity="bottom|right|end"
         tools:layout_editor_absoluteX="300dp" />
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fabRefeshPlainTour"
+        android:layout_width="68dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        app:layout_anchorGravity="top|right"
+        android:src="@drawable/quantum_ic_refresh_white_24"
+        android:layout_marginTop="60dp"
+        android:layout_marginRight="15dp"
+        app:layout_anchor="@+id/rcviewTours"
+         />
 
 
 </android.support.design.widget.CoordinatorLayout>

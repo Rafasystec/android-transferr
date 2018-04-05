@@ -13,7 +13,7 @@ import br.com.transferr.model.TourOption
 /**
  * Created by root on 03/04/18.
  */
-class SpTourOptionAdapter(context: Context, values:List<TourOption>) : ArrayAdapter<TourOption>(context, R.layout.support_simple_spinner_dropdown_item,values) {
+class SpTourOptionAdapter(context: Context, values:List<TourOption>) : ArrayAdapter<TourOption>(context, R.layout.spinner_layout,values) {
 
     var options = values
 
