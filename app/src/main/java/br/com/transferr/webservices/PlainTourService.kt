@@ -4,6 +4,7 @@ import br.com.transferr.helpers.HelperCallBackWebService
 import br.com.transferr.model.Driver
 import br.com.transferr.model.PlainTour
 import br.com.transferr.model.responses.OnResponseInterface
+import br.com.transferr.model.responses.ResponsePlainTour
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -24,11 +25,17 @@ object PlainTourService: SuperWebService() {
         service.getByDriver(id).enqueue(HelperCallBackWebService(responseInterface))
     }
 
+    fun save(responsePlainTour: ResponsePlainTour,responseInterface: OnResponseInterface<PlainTour>){
+        service.save(responsePlainTour).enqueue(HelperCallBackWebService(responseInterface))
+    }
+
 }
 
 interface IPlainTour{
     @POST(BASE_URL)
     fun save(@Body plainTour: PlainTour): Call<PlainTour>
+    @POST(BASE_URL)
+    fun save(@Body responsePlainTour: ResponsePlainTour): Call<PlainTour>
     @GET(BASE_URL+"/{id}")
     fun get(@Path("id") id:Int): Call<PlainTour>
     @GET(BASE_URL+"/bydriver/{id}")
