@@ -31,9 +31,7 @@
         <item name="android:paddingRight">20dp</item>
         <item name="android:paddingTop">5dp</item>
         <item name="android:paddingBottom">5dp</item>
-        <item name="android:popupBackground">#DFAAFF66</item>
-        <item name="android:textColor">#FFFFFF</item>
-        <item name="android:textSize">14sp</item>
+        <item name="android:popupBackground">#DFE0F8E6</item>
     </style>
 
 </resources>

@@ -4,16 +4,21 @@ import android.Manifest
 import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.graphics.Color
 import android.location.LocationManager
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.os.PersistableBundle
 import android.provider.Settings
 import android.support.v4.app.ActivityCompat
+import android.support.v4.content.LocalBroadcastManager
 import android.support.v7.app.AlertDialog
+import android.util.Log
 import android.view.View
 import br.com.transferr.R
+import br.com.transferr.broadcast.InternetBroadCast
 import br.com.transferr.extensions.log
 import br.com.transferr.extensions.setupToolbar
 import br.com.transferr.extensions.showError
@@ -35,10 +40,12 @@ class MainActivity : SuperClassActivity() {
 
     lateinit var locationManager: LocationManager
     var car:Car?=null
+    var internetBroadCast = InternetBroadCast()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setupToolbar(R.id.toolbar,"Início")
+        registerInternetReceiver()
         getBundleValues(savedInstanceState)
         checkLogin()
         initView()
@@ -100,10 +107,12 @@ class MainActivity : SuperClassActivity() {
                     val myIntent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
                     startActivity(myIntent)
                     swtOnline.isChecked = true
+                    swtOnline.setTextColor(Color.BLUE)
                     startServiceIntent()
                 })
                 .setNegativeButton("Cancel", DialogInterface.OnClickListener { paramDialogInterface, paramInt ->
                    swtOnline.isChecked = false
+                    swtOnline.setTextColor(Color.BLACK)
                    stopServiceIntent()
                 })
         dialog.show()
@@ -166,13 +175,10 @@ class MainActivity : SuperClassActivity() {
         return true
     }
 
-    //private fun startMap(){
-    //    startActivity(Intent(context,InitialActivity::class.java))
-    //}
-
     private fun checkNetwork(){
-        if(!isConnected()){
-            toast("Sem internet. Por favor ative sua internet")
+        var isConnectedNow = isConnected()
+        if(!isConnectedNow){
+            showMessage(isConnectedNow)
         }
     }
 
@@ -270,4 +276,23 @@ class MainActivity : SuperClassActivity() {
         }
     }
 
+    private fun registerInternetReceiver(){
+        registerReceiver(internetBroadCast,
+                IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION))
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        unregisterInternetReceiver();
+    }
+
+    private fun unregisterInternetReceiver(){
+        try {
+            unregisterReceiver(InternetBroadCast())
+            LocalBroadcastManager.getInstance(this)
+                    .unregisterReceiver(internetBroadCast)
+        }catch (illegal:RuntimeException){
+            Log.e("ERRO",illegal.message)
+        }
+    }
 }

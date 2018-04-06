@@ -32,7 +32,7 @@
     <Spinner
         android:id="@+id/spLocation"
         android:layout_width="320dp"
-        android:layout_height="45dp"
+        android:layout_height="50dp"
         android:padding="10dp"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
@@ -53,7 +53,7 @@
     <Spinner
         android:id="@+id/spSeats"
         android:layout_width="320dp"
-        android:layout_height="45dp"
+        android:layout_height="50dp"
         android:padding="10dp"
         android:paddingLeft="10dp"
         android:paddingRight="10dp"
@@ -79,10 +79,10 @@
             android:textStyle="bold"/>
 
         <TextView
-
+            android:id="@+id/lblRemindingSeats"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingLeft="60dp"
+            android:paddingLeft="45dp"
             android:text="0"
             android:textSize="@dimen/form_text_size"
             android:textColor="@color/violet"
@@ -104,7 +104,7 @@
             android:textColor="@color/violet"
             android:textStyle="bold"/>
         <TextView
-
+            android:id="@+id/lblCarCapacity"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="@dimen/form_text_size"

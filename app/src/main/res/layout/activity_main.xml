@@ -2,8 +2,8 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:id="@+id/mainActivity">
 
    <!-- including the toolbar -->
     <include layout="@layout/toolbar"/>
@@ -45,7 +45,7 @@
      android:id="@+id/lblPlacaValue"
      android:layout_width="match_parent"
      android:layout_height="wrap_content"
-     android:text="HYG-1176"
+     android:text="XXX-0000"
      android:textSize="18dp"
      android:layout_marginLeft="@dimen/form_margin_left"
      android:textColor="@color/black"
@@ -68,7 +68,7 @@
      android:id="@+id/lblModelValue"
      android:layout_width="match_parent"
      android:layout_height="wrap_content"
-     android:text="Chevrolet D-20"
+     android:text="Modelo"
      android:textSize="18dp"
      android:layout_marginLeft="@dimen/form_margin_left"
      android:textColor="@color/black"
@@ -91,7 +91,7 @@
      android:id="@+id/lblColorValue"
      android:layout_width="match_parent"
      android:layout_height="wrap_content"
-     android:text="Bege Desert"
+     android:text="Cor"
      android:textSize="18dp"
      android:layout_marginLeft="@dimen/form_margin_left"
      android:textColor="@color/black"
@@ -113,7 +113,7 @@
      android:id="@+id/lblDriverValue"
      android:layout_width="match_parent"
      android:layout_height="wrap_content"
-     android:text="José de Paula"
+     android:text="Meu nome"
      android:textSize="18dp"
      android:layout_marginLeft="@dimen/form_margin_left"
      android:textColor="@color/black"
@@ -156,6 +156,7 @@
      android:layout_marginTop="16dp"
      android:background="@drawable/button_shape"
      />
+
 <!--
     <include layout="@layout/action_map" />
 -->

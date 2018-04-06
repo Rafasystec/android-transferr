@@ -44,8 +44,6 @@ class LocationTrackingService : Service(),com.google.android.gms.location.Locati
     }
 
     override fun onLocationChanged(location: Location?) {
-        //var msg = "Updated Location: LatLon " + location?.latitude + " - " + location?.longitude
-        //Toast.makeText(this, msg, Toast.LENGTH_SHORT).show()
         callWebService(location)
     }
 
@@ -140,13 +138,10 @@ class LocationTrackingService : Service(),com.google.android.gms.location.Locati
 
     }
 
-    private fun isConnected():Boolean{
-        return NetworkUtil.isNetworkAvailable(this)
-    }
 
     override fun onDestroy() {
         super.onDestroy()
-        toast("On destroy")
+        //toast("On destroy")
         if(mGoogleApiClient != null){
             if(mGoogleApiClient.isConnected){
                 mGoogleApiClient.disconnect()
