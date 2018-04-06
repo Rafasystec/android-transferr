@@ -4,6 +4,7 @@ import br.com.transferr.helpers.HelperCallBackWebService
 import br.com.transferr.model.Driver
 import br.com.transferr.model.PlainTour
 import br.com.transferr.model.responses.OnResponseInterface
+import br.com.transferr.model.responses.ResponseOK
 import br.com.transferr.model.responses.ResponsePlainTour
 import retrofit2.Call
 import retrofit2.http.*
@@ -30,6 +31,10 @@ object PlainTourService: SuperWebService() {
         service.increaseSeats(idPlainTour,seats).enqueue(HelperCallBackWebService(responseInterface))
     }
 
+    fun delete(id: Long,responseInterface: OnResponseInterface<ResponseOK>){
+        service.delete(id).enqueue(HelperCallBackWebService(responseInterface))
+    }
+
 }
 
 interface IPlainTour{
@@ -38,9 +43,11 @@ interface IPlainTour{
     @POST(BASE_URL+"/save")
     fun save(@Body responsePlainTour: ResponsePlainTour): Call<PlainTour>
     @GET(BASE_URL+"/{id}")
-    fun get(@Path("id") id:Int): Call<PlainTour>
+    fun get(@Path("id") id:Long): Call<PlainTour>
     @GET(BASE_URL+"/bydriver/{id}")
     fun getByDriver(@Path("id") id:Long): Call<List<PlainTour>>
     @PUT(BASE_URL+"/increase/seats/{idPlainTour}/{seats}")
     fun increaseSeats(@Path("idPlainTour") idPlainTour:Long,@Path("seats") seats:Int): Call<PlainTour>
+    @DELETE(BASE_URL+"/{id}")
+    fun delete(@Path("id") id:Long): Call<ResponseOK>
 }

@@ -12,11 +12,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import br.com.transferr.R
+import br.com.transferr.model.Car
 import br.com.transferr.model.PlainTour
+import br.com.transferr.model.responses.OnResponseInterface
+import br.com.transferr.model.responses.ResponseOK
 import br.com.transferr.util.AddPassengerDialog
+import br.com.transferr.util.Prefes
+import br.com.transferr.webservices.PlainTourService
 import kotlinx.android.synthetic.main.rc_view_tours.view.*
 import org.jetbrains.anko.alert
 import org.jetbrains.anko.noButton
+import org.jetbrains.anko.toast
 import org.jetbrains.anko.yesButton
 
 /**
@@ -76,9 +82,31 @@ class TourAdapter(private val tours:List<PlainTour>,private val context: Context
         }
 
         private fun excluir(tour: PlainTour){
-            Toast.makeText(context,"Excluir item ${tour.id}",Toast.LENGTH_LONG).show()
+            PlainTourService.delete(tour.id!!,
+                    object: OnResponseInterface<ResponseOK> {
+                        override fun onSuccess(body: ResponseOK?) {
+                            showMessage("Excluido com sucesso!")
+                        }
+
+                        override fun onError(message: String) {
+                            showMessage("Erro ao tentar excluir: $message")
+                        }
+
+                        override fun onFailure(t: Throwable?) {
+                            showMessage("Falha grave: ${t!!.message}")
+                        }
+
+
+                    }
+                    )
+
+        }
+        fun showMessage(message:String){
+            Toast.makeText(context,message,Toast.LENGTH_SHORT).show()
         }
     }
+
+
 }
 
 
