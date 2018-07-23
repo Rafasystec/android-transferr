@@ -44,7 +44,7 @@ class TourAdapter(private val tours:List<PlainTour>,private val context: Context
             var plainTour = tours[position]
             it.bindView(plainTour)
             it.itemView.setOnClickListener {
-                Toast.makeText(context,"Ao clicar será modificado",Toast.LENGTH_SHORT).show()
+                //Toast.makeText(context,"Ao clicar será modificado",Toast.LENGTH_SHORT).show()
                 val dialog = AddPassengerDialog(context,activity,plainTour)
                 var alertDialog = dialog.create()
                 alertDialog.setOnDismissListener{

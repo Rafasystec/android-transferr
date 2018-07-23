@@ -23,7 +23,7 @@ class AddPassengerDialog(val context: Context, val activity: Activity,val plainT
         var totalPassenger = 0
         var alertDialog:AlertDialog?=null
         dialogView.btnSavePlain.setOnClickListener {
-            activity.toast("OK pressed id Plain is ${plainTour.id} and Total is $totalPassenger")
+            //activity.toast("OK pressed id Plain is ${plainTour.id} and Total is $totalPassenger")
             PlainTourService.increaseSeats(plainTour.id!!,totalPassenger,
                     object : OnResponseInterface<PlainTour> {
                         override fun onSuccess(body: PlainTour?) {
@@ -44,7 +44,8 @@ class AddPassengerDialog(val context: Context, val activity: Activity,val plainT
 
         }
         dialogView.btnCancelPlain.setOnClickListener {
-            activity.toast("Cancel")
+            //activity.toast("Cancel")
+            alertDialog?.dismiss()
         }
 
         dialogView.btnAddPassenger.setOnClickListener {
