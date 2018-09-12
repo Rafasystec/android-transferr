@@ -11,5 +11,7 @@ class Driver : Entity(){
     var countryRegister: String = ""
     var birthDate: Int = 0
     var user:User?=null
+    var whatsapp: Long? = null
     var group:Grouping?=null
+    var car: Car? = null
 }

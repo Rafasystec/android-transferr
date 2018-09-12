@@ -24,6 +24,7 @@ import br.com.transferr.extensions.setupToolbar
 import br.com.transferr.extensions.showError
 import br.com.transferr.extensions.showValidation
 import br.com.transferr.model.Car
+import br.com.transferr.model.Driver
 import br.com.transferr.model.enums.EnumStatus
 import br.com.transferr.model.responses.OnResponseInterface
 import br.com.transferr.model.responses.RequestCoordinatesUpdate
@@ -33,6 +34,7 @@ import br.com.transferr.util.NetworkUtil
 import br.com.transferr.util.Prefes
 import br.com.transferr.util.VariablesUtil
 import br.com.transferr.webservices.CarService
+import br.com.transferr.webservices.DriverService
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.toast
 
@@ -139,17 +141,28 @@ class MainActivity : SuperClassActivity() {
         lblModelValue.text = car.model
         lblPlacaValue.text = car.carIdentity
         swtOnline.isChecked = car.status!=EnumStatus.OFFLINE
-        Prefes.prefsDriver = car.driver?.id!!
+        //Prefes.prefsDriver = car?.driver?.id!!
+    }
+
+    private fun initScreenFields(driver:Driver){
+        this.car = driver.car
+        Prefes.prefsCar = car?.id!!
+        lblColorValue.text = car?.color
+        lblDriverValue.text= driver?.name
+        lblModelValue.text = car?.model
+        lblPlacaValue.text = car?.carIdentity
+        swtOnline.isChecked = car?.status!=EnumStatus.OFFLINE
+        Prefes.prefsDriver = driver?.id!!
     }
 
     private fun getCarFromWebService(){
         initProgressBar()
-        CarService.getCarByUser(Prefes.prefsLogin,
-            object: OnResponseInterface<Car>{
-                    override fun onSuccess(car: Car?) {
+        //CarService.getCarByUser(Prefes.prefsLogin,
+        DriverService.doGetByUserId(Prefes.prefsLogin,
+            object: OnResponseInterface<Driver>{
+                    override fun onSuccess(body: Driver?) {
+                        initScreenFields(body!!)
                         stopProgressBar()
-                        initScreenFields(car!!)
-                        Prefes.prefsCarJSON = car
                     }
 
                     override fun onError(message: String) {

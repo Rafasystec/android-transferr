@@ -16,7 +16,7 @@ open class SuperWebService {
     protected var httpClient:OkHttpClient = OkHttpClient.Builder()
             .connectTimeout(5,TimeUnit.SECONDS)
             .writeTimeout(5,TimeUnit.SECONDS)
-            .readTimeout(5,TimeUnit.SECONDS)
+            .readTimeout(15,TimeUnit.SECONDS)
             .build()
 
     protected val retrofit = Retrofit.Builder()

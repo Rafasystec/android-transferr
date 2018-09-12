@@ -30,4 +30,8 @@ object DriverService :SuperWebService(){
     fun getDriverByCar(id:Long,responseInterface: OnResponseInterface<Driver>){
         return service.getDriverByCar(id).enqueue(HelperCallBackWebService(responseInterface))
     }
+
+    fun doGetByUserId(userId: Long,responseInterface: OnResponseInterface<Driver>){
+        service.doGetByUserId(userId).enqueue(HelperCallBackWebService(responseInterface))
+    }
 }

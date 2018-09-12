@@ -17,4 +17,6 @@ interface IDriverService  {
     fun getDriver(@Path("id") id:Int): Call<Driver>
     @GET("driver/by/car/{id}")
     fun getDriverByCar(@Path("id") id:Long): Call<Driver>
+    @GET("driver/by/user/{userId}")
+    fun doGetByUserId(@Path("userId") userId:Long):Call<Driver>
 }
